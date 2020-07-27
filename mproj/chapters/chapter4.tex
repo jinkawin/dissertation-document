@@ -1,0 +1,71 @@
+\chapter{Implement}\label{implement}
+
+    \section{Introduction}
+        - System Overview – What I am going to use and implement
+                - This project is implemented on Android Operating System, and Java is used as programming language
+        - Implementation is divided into 3 layers
+                - Java
+                    - Process by using CPU
+                        - Multithreading by using CPU
+                    - Interact and handle evert from user
+                    - Manage resource (Ex. Video files, Model Files)
+                    - I/O (Ex. Camera, read file, write File)
+                    - Permission (Internal and External Storage, Camera)
+                    - Each method has to call Native Lib (OpenCV) via JNI
+
+                - Java Native Interface (JNI)
+                    - Perform as intermediate connection between Java and C++
+                    - JNI is developed by using Native Development Kit (NDK)
+                        - And NDK will compile C or C++ into native library by using CMake
+                - C++
+                    - Process by using GPU
+                        - Multithreading by using GPU
+                    - Directly access to memory
+                    - Able to Call OpenCV and other libs without JNI
+
+    \section{Deep Neutral Network}
+        -	There are 2 model which are used for doing forward propagation
+            - YOLO3 Model
+            - Mobilenet SSD Model
+
+        -	How DNN is implemented
+            - DNN is implemented by using OpenCV, and there are steps of processing
+                - Video -> Image -> Mat
+                - blobFromImage
+                - setInput
+                - net.forward (forward propagation)
+                - determine classification and confidence(accuracy)
+                - NMSBox
+                - Calculate Distance
+
+    \section{Deep Neutral Network}
+        -	Intro about parallelisation – How it works in Android
+            - Thread vs ThreadPool
+            - Handler
+        -	Multithreading and Multicore
+        -	System overview (Manager – Task – Runnable)
+            - <Insert diagram>
+        -	1 frame per 1 thread
+            - <Insert diagram>
+
+    \section{Parallelisation}
+        -	Intro about parallelisation – How it works in Android
+            - Thread vs ThreadPool
+            - Handler
+        -	Multithreading and Multicore
+        -	System overview (Manager – Task – Runnable)
+            - <Insert diagram>
+        -	1 frame per 1 thread
+            - <Insert diagram>
+
+        \subsection{Multitheading with CPU}
+            -	How to implement
+                - Using Java
+                - Thread pool
+                    <insert sample of code>
+            -	Memory Management
+                - Singleton Pattern
+                - Static block
+                    - Executed only once
+                - Queue and recycling
+

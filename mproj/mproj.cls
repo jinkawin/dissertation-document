@@ -49,7 +49,7 @@
   \vskip 2em%
   A dissertation presented in part fulfilment of the requirements of the Degree of Master of Science at The University of Glasgow
   \vskip 2em%
-  \@date 
+  \@date
   \vfill
 \end{titlepage}%
 \setcounter{footnote}{0}%
@@ -71,7 +71,7 @@
 
 I hereby give my permission for this project to be shown to other
 University of Glasgow students and to be distributed in an electronic
-format.  \textbf{Please note that you are under no obligation to sign 
+format.  \textbf{Please note that you are under no obligation to sign
 this declaration, but doing so would help future students.}
 
 \begin{tabular}{@{}llll}
