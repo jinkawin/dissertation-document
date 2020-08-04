@@ -87,6 +87,7 @@
                 - When the number of threads is increasing, image processing task is not consistently processed by core.
                     - Because the given task has to wait while core switching and doing another task (context switching)
                     - Thus, the given task requires more time to be finished
+                - There are stages of CPU's clock frequency
             - JNI
                 - Calling JNI is expensive [ref]
 
@@ -105,6 +106,9 @@
                 - CPU hits 100% when performing tasks
                 - CPU drops when GC is started
                         - Because threads are paused (Yellow) when GC is collecting
+
+            - Thread Pool Problem
+                - Thread Pool only improve when there are large number of asynchronous tasks. [https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor.html]
 
         % Memory Usgae
         \begin{figure}[!ht]

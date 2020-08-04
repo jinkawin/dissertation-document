@@ -1,5 +1,35 @@
 \chapter{Background}\label{background}
-    Introduce background chapter…
+
+    This chapter aim to explain technologies, tools, and specification of a device that are used in this project.
+    Then, this chapter gives an analysis of related applications.
+
+    \section{Detection Algorithm}
+        \subsection{Deep Neural Network}
+        -	People Detection
+            - Using DNN
+            - What is DNN
+            - How it works
+            - How it works in this project
+                - Insert diagram of DNN (Flow of Image Processing)
+                    - blobFronImage
+                    - forward
+                    - ...
+        -	Distance Calculation
+            - Explain about formula
+                \begin{equation*}
+                    d = \sqrt{(a_{0}-b_{0})^{2}+(D/c)\times(a_{1}-b_{1})^{2}}
+                \end{equation*}
+
+                \begin{equation*}
+                    c = \frac{a_{1}+b_{1}}{2}
+                \end{equation*}
+                - C value (Calibation) -> perspective
+                - Image diagonal line (550 -> (480x270))
+                - Euclidean Distance
+            - Insert picture for explination
+        -	Lib
+        -	Models
+
     \section{Mobile Technology}
         -	What is Android
             - An open source OS, support mobiles, tablets, watches, TVs, Cars’ system [http://tinyurl.com/yag8kyst]
@@ -10,24 +40,17 @@
                 1.	For intensive application which require extra performance
                 2.	Accessing native libs (C and C++)
             - Java and C++ communicate by using Java Native Interface (JNI) [https://developer.android.com/ndk/guides]
-        -	Server (and Cloud) is replaced by Mobile Computing [http://tinyurl.com/y6vusamh]
-        -	Mobile edge cloud [http://tinyurl.com/y7umteqg]
+                - What is JNI
+                - Why I need this
 
-    \section{Detection Algorithm}
-        -	People Detection
-            - Using DNN
-            - What is DNN
-            - How it works
-            - How it works in this project
-                - Insert diagram of DNN
-        -	Distance Calculation
-        -	Libs
-        -	Models
+        % -	Server (and Cloud) is replaced by Mobile Computing [http://tinyurl.com/y6vusamh]
+        % -	Mobile edge cloud [http://tinyurl.com/y7umteqg]
 
     \section{Parallel Computing}
         -	What is parallel computing
         -	Why I need it
         -	How it works
+            - new Thread() vs ThreadPool
             - Insert general picture about Parallel computing
         -	Why it benefits for Android
 
