@@ -5,24 +5,25 @@
     \section{Android Application}
         This application is implemented on the Android Operating System, and the target Software Development Kit (SDK) version is set at level 29, namely Android Q.
         Implementation is divided into 3 layers.
-        The first layer is an application layer, which is written in Java.
-            This Layer mainly interacts with a user, checks permissions, and communicates with Java Native Interface (JNI).
-            In addition, this layer also handle I/O implementation such as camera, file, and storage.
-        The second layer is JNI, which is written in C and C++.
-            JNI layer performs 2 main tasks.
-                The fist task is being an intermediate connection between the application layer and a library layer.
-                The second task is loading native shared libraries, which is compiled by a Native Development Kit (NDK).
-        The last layer is the library layer, which is written in C++.
-            This layer performs calculation tasks, including Deep Neural Network and distance calculation.
+            The first layer is an application layer, which is written in Java.
+                This Layer mainly interacts with a user, checks permissions, and communicates with Java Native Interface (JNI).
+                In addition, this layer also handle I/O implementation such as camera, file, and storage.
+            The second layer is JNI, which is written in C and C++.
+                JNI layer performs 2 main tasks.
+                    The fist task is being an intermediate connection between the application layer and a library layer.
+                    The second task is loading native shared libraries, which is compiled by a Native Development Kit (NDK).
+            The last layer is the library layer, which is written in C++.
+                This layer performs calculation tasks, including Deep Neural Network and distance calculation.
 
         However, Deep Neural Network and distance calculation can be implemented in the application layer,
-        but executing both tasks in the library layer gains a better performance. There are 2 reasons of gaining the better performance.
+        but executing both tasks in the library layer gains a better performance. There are 2 reasons of increasing performance.
             The first reason is reducing JNI calling. Performing both tasks have to call JNI methods many times, and calling JNI methods are expensive and cost an overhead.
                 Thus, implementing JNI manually reduces the number of JNI calls.
-            The second reason is memory management. C++ is able to access values in the memeory by using a pointer.
+            The second reason is memory management. C++ is able to access values in the memory by using a pointer.
                 Thus, values can be directly used without copying.
+            %  The last reason is SIMD (NEON)
 
-    \section{Deep Neutral Network}
+    \section{Human Detection}
         -	There are 2 model which are used for doing forward propagation
             - YOLO3 Model
             - Mobilenet SSD Model
@@ -37,15 +38,20 @@
                 - NMSBox
                 - Calculate Distance
 
-    \section{Deep Neutral Network}
-        -	Intro about parallelisation – How it works in Android
-            - Thread vs ThreadPool
-            - Handler
-        -	Multithreading and Multicore
-        -	System overview (Manager – Task – Runnable)
-            - <Insert diagram>
-        -	1 frame per 1 thread
-            - <Insert diagram>
+        \section{Distance Calculation}
+            -	There are 2 model which are used for doing forward propagation
+                - YOLO3 Model
+                - Mobilenet SSD Model
+
+            -	How DNN is implemented
+                - DNN is implemented by using OpenCV, and there are steps of processing
+                    - Video -> Image -> Mat
+                    - blobFromImage
+                    - setInput
+                    - net.forward (forward propagation)
+                    - determine classification and confidence(accuracy)
+                    - NMSBox
+                    - Calculate Distance
 
     \section{Parallelisation}
         -	Intro about parallelisation – How it works in Android

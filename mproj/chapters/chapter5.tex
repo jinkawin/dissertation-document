@@ -35,45 +35,91 @@
         % YOLO Model Performace Table
         \begin{table}[!htp]\centering
             \scriptsize
-            \begin{tabular}{lrrrrrrrr}\toprule
-                \multicolumn{2}{c}{Model} &\multicolumn{6}{c}{YOLO} \\\cmidrule{1-8}
-                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{5}{c}{Parallel Computing} \\\cmidrule{4-8}
-                & & &1 Thread &2 Threads &4 Threads &6 Threads &8 Threads \\\midrule
-                \multicolumn{2}{c}{Total Process Time (second)} &102.972 &117.805 &96.415 &92.242 &88.688 &99.441 \\
-                \multicolumn{2}{c}{Garbage Collector (second)} &- &0.102 &0.280 &2.024 &3.625 &11.333 \\
-                \multicolumn{2}{c}{Process Time without GC} &- &117.703 &96.136 &90.218 &85.065 &88.108 \\
-                \multicolumn{2}{c}{Forward Propagation (Total)} &79.097 &- &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Average)} &2.553 &2.872 &4.840 &9.231 &12.827 &19.713 \\
-                \multicolumn{2}{c}{Forward Propagation (Min)} &2.213 &2.564 &4.003 &5.478 &8.301 &14.733 \\
-                \multicolumn{2}{c}{Forward Propagation (Max)} &2.693 &3.092 &6.436 &12.566 &15.324 &21.815 \\
-                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 &31 \\
-                \multicolumn{2}{c}{Process per frame (second)} &3.322 &3.800 &3.110 &2.976 &2.861 &3.208 \\
+            \begin{tabular}{lrrrrrrr}\toprule
+                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{YOLO} \\\cmidrule{1-7}
+                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
+                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                \multicolumn{2}{c}{Total Process Time (second)} &102.972 &117.805 &96.415 &92.242 &99.441 \\
+                \multicolumn{2}{c}{Garbage Collector (second)} &- &0.102 &0.280 &2.024 &11.333 \\
+                \multicolumn{2}{c}{Process Time without GC} &- &117.703 &96.136 &90.218 &88.108 \\
+                \multicolumn{2}{c}{Forward Propagation (Total)} &79.097 &- &- &- &- \\
+                \multicolumn{2}{c}{Forward Propagation (Average)} &2.553 &2.872 &4.840 &9.231 &19.713 \\
+                \multicolumn{2}{c}{Forward Propagation (Min)} &2.213 &2.564 &4.003 &5.478 &14.733 \\
+                \multicolumn{2}{c}{Forward Propagation (Max)} &2.693 &3.092 &6.436 &12.566 &21.815 \\
+                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                \multicolumn{2}{c}{Process per frame (second)} &3.322 &3.800 &3.110 &2.976 &3.208 \\
+                \multicolumn{2}{c}{Improvement} & & &18.16\% &21.70\% &15.59\% \\
                 \bottomrule
             \end{tabular}
 
-            \caption{Video Processing with YOLO Model}\label{yolo:performance}
+            \caption{Video Processing with YOLO Model with official build}\label{yolo:official-performace}
         \end{table}
 
         % SSD Model Performace Table
         \begin{table}[!htp]\centering
             \scriptsize
-            \begin{tabular}{lrrrrrrrr}\toprule
-                \multicolumn{2}{c}{Model} &\multicolumn{6}{c}{MobileNet SSD} \\\cmidrule{1-8}
-                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{5}{c}{Parallel Computing} \\\cmidrule{4-8}
-                & & &1 Thread &2 Threads &4 Threads &6 Threads &8 Threads \\\midrule
-                \multicolumn{2}{c}{Total Process Time (second)} &7.132 &8.237 &6.873 &6.270 &5.137 &5.064 \\
-                \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- &- \\
-                \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Total)} &7.019 &- &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Average)} &0.226 &0.235 &0.401 &0.738 &0.900 &1.133 \\
-                \multicolumn{2}{c}{Forward Propagation (Min)} &0.218 &0.212 &0.353 &0.406 &0.428 &0.466 \\
-                \multicolumn{2}{c}{Forward Propagation (Max)} &0.243 &0.320 &0.456 &1.477 &3.057 &2.582 \\
-                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 &31 \\
-                \multicolumn{2}{c}{Process per frame (second)} &0.230 &0.266 &0.222 &0.202 &0.166 &0.163 \\
+            \begin{tabular}{lrrrrrrr}\toprule
+                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{SSD, OpenCV 3.4.0 Official Build} \\\cmidrule{1-7}
+                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                \multicolumn{2}{c}{Total Process Time (second)} &7.132 &8.237 &6.873 &6.270 &5.064 \\
+                \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                \multicolumn{2}{c}{Forward Propagation (Total)} &7.019 &- &- &- &- \\
+                \multicolumn{2}{c}{Forward Propagation (Average)} &0.226 &0.235 &0.401 &0.738 &1.133 \\
+                \multicolumn{2}{c}{Forward Propagation (Min)} &0.218 &0.212 &0.353 &0.406 &0.466 \\
+                \multicolumn{2}{c}{Forward Propagation (Max)} &0.243 &0.320 &0.456 &1.477 &2.582 \\
+                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                \multicolumn{2}{c}{Process per frame (second)} &0.230 &0.266 &0.222 &0.202 &0.163 \\
+                \multicolumn{2}{c}{Improvement} & & &16.56\% &23.88\% &38.52\% \\
                 \bottomrule
             \end{tabular}
 
-            \caption{Video Processing with MobileNet SSD Model}\label{ssd:performance}
+            \caption{Video Processing with MobileNet SSD Model with official}\label{ssd:official-performace}
+        \end{table}
+
+        \begin{table}[!htp]\centering
+            \scriptsize
+            \begin{tabular}{lrrrrrrr}\toprule
+                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD without NEON} \\\cmidrule{1-7}
+                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
+                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                \multicolumn{2}{c}{Total Process Time (second)} &17.308 &19.030 &15.172 &11.797 &10.624 \\
+                \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                \multicolumn{2}{c}{Forward Propagation (Total)} &17.193 &17.848 &- &- &- \\
+                \multicolumn{2}{c}{Forward Propagation (Average)} &0.555 &0.576 &0.926 &1.416 &2.462 \\
+                \multicolumn{2}{c}{Forward Propagation (Min)} &0.519 &0.545 &0.582 &0.756 &1.310 \\
+                \multicolumn{2}{c}{Forward Propagation (Max)} &0.586 &0.654 &1.412 &2.593 &5.308 \\
+                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                \multicolumn{2}{c}{Process per frame (second)} &0.558 &0.614 &0.489 &0.381 &0.343 \\
+                \multicolumn{2}{c}{Improvement} & & &20.27\% &38.01\% &44.17\% \\
+                \bottomrule
+            \end{tabular}
+
+            \caption{Video Processing with MobileNet SSD Model without NEON}\label{ssd:non-neon-performance}
+        \end{table}
+
+        \begin{table}[!htp]\centering
+            \scriptsize
+            \begin{tabular}{lrrrrrrr}\toprule
+                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD with NEON} \\\cmidrule{1-7}
+                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                \multicolumn{2}{c}{Total Process Time (second)} &4.006 &6.079 &4.208 &3.127 &2.890 \\
+                \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                \multicolumn{2}{c}{Forward Propagation (Total)} &3.927 &4.950 &- &- &- \\
+                \multicolumn{2}{c}{Forward Propagation (Average)} &0.126 &0.159 &0.225 &0.339 &0.645 \\
+                \multicolumn{2}{c}{Forward Propagation (Min)} &0.117 &0.128 &0.131 &0.190 &0.266 \\
+                \multicolumn{2}{c}{Forward Propagation (Max)} &0.135 &0.250 &0.295 &0.596 &1.798 \\
+                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                \multicolumn{2}{c}{Process per frame (second)} &0.129 &0.196 &0.136 &0.101 &0.093 \\
+                \multicolumn{2}{c}{Improvement} & & &30.78\% &48.56\% &52.46\% \\
+                \bottomrule
+            \end{tabular}
+
+            \caption{Video Processing with MobileNet SSD Model with NEON}\label{ssd:neon-performance}
         \end{table}
 
         -	Limitation / Problem
