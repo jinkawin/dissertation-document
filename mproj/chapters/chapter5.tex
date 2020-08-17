@@ -1,7 +1,113 @@
 \chapter{Testing and Evaluation}\label{testing}
 
-    \section{Performace Evaluation}
-        - Sequential vs Parallel
+    This chapter presents an evaluation of the application, which is divided into 3 parts.
+    The first part will show variables that must be controlled for the reliability and stability of the result.
+    The second part is going to evaluate the application's performance,
+    which are comparisons among models, programming languages, and technologies.
+    The last section is going to show a usability testing of this application.
+
+    \section{Controlled Variables}
+        To ensure the result of the performance will not be varied by other factors, some variables must be controlled as following:
+        \begin{enumerate}
+            \item All testing cases will be run on Samsung Galaxy S10+.
+            \item All running background applications will be closed, and memory will be freed before testing.
+            \item To prevent CPU's speed is limited, a power management mode will be set to "Optimized".
+            \item Total number of frames in the testing video will be set to 31 frames.
+            \item A testing video resolution will be set to 540x480 pixels.
+        \end{enumerate}
+
+    \section{Performace Comparison}
+        \subsection{Model Comparison}
+            In this section, the performance of 2 detection models will be compare, regardless of other tools and techniques.
+            To evaluate the performance, each model will process on a single frame.
+            There are 2 different resolutions were used as inputs for comparing the performance and understanding the variation of calculation time.
+
+            % Picture Performance Table
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{2}{c}{YOLO} &\multicolumn{2}{c}{SSD} \\\midrule
+                    \multicolumn{2}{c}{Size} &960×540 &540x480 &960×540 &540x480 \\
+                    \multicolumn{2}{c}{Total Process Time (second)} &4.235 &3.827 &0.337 &0.323 \\
+                    \multicolumn{2}{c}{Forward Propagation per frame (second)} &3.456 &3.019 &0.284 &0.278 \\
+                    \multicolumn{2}{c}{Forward Propagation per frame (perenctage)} &81.61\% &78.89\% &84.27\% &86.07\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Picture Processing Performace}\label{performance:picture}
+            \end{table}
+
+            As can be seen from the Table \ref{performance:picture}, the processing time of YOLO model significantly increases when the size of the picture is greater.
+            In contrast, MobileNet SSD is able to process the given picture faster than YOLO model.
+            The processing time of MobileNet SSD slightly increases when the size of the picture is increased.
+
+        \subsection{Multithreading}
+            In this section, the performance of both models will be evaluated with multithreading techinique,
+            and the evaluation will be divided into 3 parts: sequential computing, YOLO with multithreading, and MobileNet SSD with multithreading.
+            As mentions provios section, in this evaluation, controlled variables are set.
+            The number of frames in the testing video will be set to 31 frames.
+
+            % YOLO Model Performace Table
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{YOLO} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &102.972 &117.805 &96.415 &92.242 &99.441 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &0.102 &0.280 &2.024 &11.333 \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &117.703 &96.136 &90.218 &88.108 \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &79.097 &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &2.553 &2.872 &4.840 &9.231 &19.713 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &2.213 &2.564 &4.003 &5.478 &14.733 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &2.693 &3.092 &6.436 &12.566 &21.815 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &3.322 &3.800 &3.110 &2.976 &3.208 \\
+                    \multicolumn{2}{c}{Improvement} & & &18.16\% &21.70\% &15.59\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with YOLO Model with official build}\label{yolo:official-performace}
+            \end{table}
+
+
+            For the first part, application will process the testing video sequentially, and measure the performance.
+            This measurement will be compared to multithreading, and evaluate the improvement of the performance.
+            As a result in Table \ref{performance:picture} and \ref{yolo:official-performace}, YOLO model took almost 103 seconds to processed 31 frames video, while MobileNet SSD model took about 7 seconds.
+            However, even if MobileNet SSD model can achieve better performance than YOLO model, the application is not able to process a video in real-time.
+
+            % SSD Model Performace Table
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{SSD, OpenCV 3.4.0 Official Build} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &7.132 &8.237 &6.873 &6.270 &5.064 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &7.019 &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.226 &0.235 &0.401 &0.738 &1.133 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.218 &0.212 &0.353 &0.406 &0.466 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.243 &0.320 &0.456 &1.477 &2.582 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.230 &0.266 &0.222 &0.202 &0.163 \\
+                    \multicolumn{2}{c}{Improvement} & & &16.56\% &23.88\% &38.52\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with MobileNet SSD Model with official}\label{ssd:official-performace}
+            \end{table}
+
+            Then, a multithreading technique is implemented to increase performance and achieve real-time processing.
+            In the testing device, there are 8 physical cores, so it can effectively process up to 8 threads.
+            The results of implementing multithreading are shown is Table \ref{yolo:official-performace}.
+            The performance of using 2 threads is improved 18 percent, and it reach the best performance by using 4 threads.
+            However, the performance of
+            The performance is slightly improved, and it is not able to achieve theoretical speedup of Amdahl's law by using multithreading technique.
+            The best performance of YOLO model is using 4 threads.
+
+            - Sequential vs Parallel
             -	31 frames process vs 16 frames process
             -	Caffe MobileNet SSD vs Darknet YOLO model
                 - YOLO
@@ -16,68 +122,7 @@
                     - Less accuracy
                         - Able to detect person with confidence threshold 0.3
 
-
-        % Picture Performance Table
-        \begin{table}[!htp]\centering
-            \scriptsize
-            \begin{tabular}{lrrrrrr}\toprule
-                \multicolumn{2}{c}{Model} &\multicolumn{2}{c}{YOLO} &\multicolumn{2}{c}{SSD} \\\midrule
-                \multicolumn{2}{c}{Size} &960×540 &540x480 &960×540 &540x480 \\
-                \multicolumn{2}{c}{Total Process Time (second)} &4.235 &3.827 &0.337 &0.323 \\
-                \multicolumn{2}{c}{Forward Propagation per frame (second)} &3.456 &3.019 &0.284 &0.278 \\
-                \multicolumn{2}{c}{Forward Propagation per frame (perenctage)} &81.61\% &78.89\% &84.27\% &86.07\% \\
-                \bottomrule
-            \end{tabular}
-
-            \caption{Picture Processing Performace}\label{performance:picture}
-        \end{table}
-
-        % YOLO Model Performace Table
-        \begin{table}[!htp]\centering
-            \scriptsize
-            \begin{tabular}{lrrrrrrr}\toprule
-                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{YOLO} \\\cmidrule{1-7}
-                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
-                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
-                \multicolumn{2}{c}{Total Process Time (second)} &102.972 &117.805 &96.415 &92.242 &99.441 \\
-                \multicolumn{2}{c}{Garbage Collector (second)} &- &0.102 &0.280 &2.024 &11.333 \\
-                \multicolumn{2}{c}{Process Time without GC} &- &117.703 &96.136 &90.218 &88.108 \\
-                \multicolumn{2}{c}{Forward Propagation (Total)} &79.097 &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Average)} &2.553 &2.872 &4.840 &9.231 &19.713 \\
-                \multicolumn{2}{c}{Forward Propagation (Min)} &2.213 &2.564 &4.003 &5.478 &14.733 \\
-                \multicolumn{2}{c}{Forward Propagation (Max)} &2.693 &3.092 &6.436 &12.566 &21.815 \\
-                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
-                \multicolumn{2}{c}{Process per frame (second)} &3.322 &3.800 &3.110 &2.976 &3.208 \\
-                \multicolumn{2}{c}{Improvement} & & &18.16\% &21.70\% &15.59\% \\
-                \bottomrule
-            \end{tabular}
-
-            \caption{Video Processing with YOLO Model with official build}\label{yolo:official-performace}
-        \end{table}
-
-        % SSD Model Performace Table
-        \begin{table}[!htp]\centering
-            \scriptsize
-            \begin{tabular}{lrrrrrrr}\toprule
-                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{SSD, OpenCV 3.4.0 Official Build} \\\cmidrule{1-7}
-                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
-                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
-                \multicolumn{2}{c}{Total Process Time (second)} &7.132 &8.237 &6.873 &6.270 &5.064 \\
-                \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
-                \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Total)} &7.019 &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Average)} &0.226 &0.235 &0.401 &0.738 &1.133 \\
-                \multicolumn{2}{c}{Forward Propagation (Min)} &0.218 &0.212 &0.353 &0.406 &0.466 \\
-                \multicolumn{2}{c}{Forward Propagation (Max)} &0.243 &0.320 &0.456 &1.477 &2.582 \\
-                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
-                \multicolumn{2}{c}{Process per frame (second)} &0.230 &0.266 &0.222 &0.202 &0.163 \\
-                \multicolumn{2}{c}{Improvement} & & &16.56\% &23.88\% &38.52\% \\
-                \bottomrule
-            \end{tabular}
-
-            \caption{Video Processing with MobileNet SSD Model with official}\label{ssd:official-performace}
-        \end{table}
-
+        \subsection{NEON Comparison}
         \begin{table}[!htp]\centering
             \scriptsize
             \begin{tabular}{lrrrrrrr}\toprule
@@ -122,40 +167,6 @@
             \caption{Video Processing with MobileNet SSD Model with NEON}\label{ssd:neon-performance}
         \end{table}
 
-        -	Limitation / Problem
-            - Limited Resource
-                - CPU clock speed
-                - RAM
-                - Power resources
-
-            - CPU
-                - ARM architecture limitation on floating-point [http://tinyurl.com/y85ykaqa]
-                - When the number of threads is increasing, image processing task is not consistently processed by core.
-                    - Because the given task has to wait while core switching and doing another task (context switching)
-                    - Thus, the given task requires more time to be finished
-                - There are stages of CPU's clock frequency
-            - JNI
-                - Calling JNI is expensive [ref]
-
-            -	Multithread Performance Analysis
-                - I/O in thread
-                    - If there is I/O operation in thread or loop, it will cost a lot of overhead
-                - Out of memory
-                    - If let each thread hold the large variable, it will cost memory overhead.
-                    - We have to free the variables after used. Otherwise, the x+1 th thread will allocate another xx MB.
-                - Young generation
-                    - If there are lot of variables that are initialled in loop, there will be a lot young generation in the heap. So, when the number of young generations is reaching the threshold, GC will correct the young generation (freeing garbage in young generation heap) which affect the performance.
-                - GC
-                    - Caused by Native [https://developer.android.com/studio/profile/memory-profiler]
-                    - Bin is GC
-                    - 8 GB (available only 3.8 GB)
-                - CPU hits 100% when performing tasks
-                - CPU drops when GC is started
-                        - Because threads are paused (Yellow) when GC is collecting
-
-            - Thread Pool Problem
-                - Thread Pool only improve when there are large number of asynchronous tasks. [https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor.html]
-
         % Memory Usgae
         \begin{figure}[!ht]
             \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting.png}
@@ -170,4 +181,8 @@
             \label{yolo:cpuUsage}
         \end{figure}
 
+    % Summary
+        - MobileNet is faster, but less accuracy.
+
     \section{Usability Testing}
+        - FPS on video
