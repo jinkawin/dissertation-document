@@ -42,10 +42,20 @@
             The processing time of MobileNet SSD slightly increases when the size of the picture is increased.
 
         \subsection{Multithreading}
-            In this section, the performance of both models will be evaluated with multithreading techinique,
+
+            % Introduction
+            In this section, the performance of both models will be evaluated with multithreading technique,
             and the evaluation will be divided into 3 parts: sequential computing, YOLO with multithreading, and MobileNet SSD with multithreading.
-            As mentions provios section, in this evaluation, controlled variables are set.
+            As mentions previous section, in this evaluation, controlled variables are set.
             The number of frames in the testing video will be set to 31 frames.
+
+            % Sequential Programming
+            For the first part, an application will process the testing video sequentially, and measure the performance.
+            This measurement will be compared to multithreading, and evaluate the improvement of the performance.
+            As a result in Table \ref{performance:picture} and \ref{yolo:official-performace},
+            YOLO model took 102.972 seconds to processed 31 frames video, while MobileNet SSD model took 7.132 seconds.
+            However, even if MobileNet SSD model can achieve better performance than YOLO model,
+            the application is not able to process a video in real-time.
 
             % YOLO Model Performace Table
             \begin{table}[!htp]\centering
@@ -70,11 +80,43 @@
                 \caption{Video Processing with YOLO Model with official build}\label{yolo:official-performace}
             \end{table}
 
+            % Introduction to Multithreading
+            Then, a multithreading technique is implemented to increase performance and achieve real-time processing.
+            To evaluate the improvement of multithreading, a number of processors will be doubled as follows: 1, 2, 4, 8, and 16.
+            In the testing device, there are 8 physical cores, so it can effectively process up to 8 threads.
 
-            For the first part, application will process the testing video sequentially, and measure the performance.
-            This measurement will be compared to multithreading, and evaluate the improvement of the performance.
-            As a result in Table \ref{performance:picture} and \ref{yolo:official-performace}, YOLO model took almost 103 seconds to processed 31 frames video, while MobileNet SSD model took about 7 seconds.
-            However, even if MobileNet SSD model can achieve better performance than YOLO model, the application is not able to process a video in real-time.
+            % Memory Usgae
+            \begin{figure}[!ht]
+                \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting.png}
+                \caption{Memory Usage of YOLO Model with 8 threads}
+                \label{yolo:memoryUsage}
+            \end{figure}
+
+            % YOLO with multithreading
+            The overall performace of YOLO model with multithreading is slightly improved.
+            There are 2 problems of YOLO model with multithreading as shown in Table \ref{yolo:official-performace}.
+            The first problem is the improvement of the performance.
+                The performance of 2 threads is improved only 18.16 percent, and it reach the best performance at 21.7 percent by using 4 threads.
+                However, the performance of 8 threads is worse than 2 threads, which is caused by Garbage Collection.
+            The second problem is Garbage Collection (GC).
+                The application was frozen while GC is collecting garbage.
+                GC is not collecting only short-lived objects but long-lived objects as well,
+                and GC is more often collect garbage when the number of threads is increased.
+                As shown in Figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
+                and GC was freeing these allocation 10 times within 5 seconds.
+                Consequently, CPU usage is dropped when GC is working.
+                This problem can be seen in the Figure \ref{yolo:cpuUsage}.
+                The progress status will be green when a thread is working.
+                It will be yellow when it is interrupted by GC,
+                and it will be gray when a thread has no activity.
+
+
+            % CPU Usage
+            \begin{figure}[!ht]
+                \includegraphics[width=6in]{images/chapter5/YOLO/cpu-usage-8threads.png}
+                \caption{CPU Usage of YOLO Model with 8 threads}
+                \label{yolo:cpuUsage}
+            \end{figure}
 
             % SSD Model Performace Table
             \begin{table}[!htp]\centering
@@ -99,28 +141,15 @@
                 \caption{Video Processing with MobileNet SSD Model with official}\label{ssd:official-performace}
             \end{table}
 
-            Then, a multithreading technique is implemented to increase performance and achieve real-time processing.
-            In the testing device, there are 8 physical cores, so it can effectively process up to 8 threads.
-            The results of implementing multithreading are shown is Table \ref{yolo:official-performace}.
-            The performance of using 2 threads is improved 18 percent, and it reach the best performance by using 4 threads.
-            However, the performance of
-            The performance is slightly improved, and it is not able to achieve theoretical speedup of Amdahl's law by using multithreading technique.
-            The best performance of YOLO model is using 4 threads.
+            % SSD with multithreading
+            For the MobileNet SSD model, Table \ref{ssd:official-performace} compares the computation time among 1, 2, 4, and 8 threads.
+            The calculation time of 2 threads is improved only 16.56 percent, and 8 threads give the best performance with 38.53 percent.
+            The improvement time of 8 threads by using MobileNet SSD model is not reduces likes YOLO model,
+            but speedup time of both models still lower than an ideal time.
 
-            - Sequential vs Parallel
-            -	31 frames process vs 16 frames process
-            -	Caffe MobileNet SSD vs Darknet YOLO model
-                - YOLO
-                    - use more memory because it calls lots of native libs (C++) which is very expensive.
-                        - GC collect very often
-                        - Programme is frozen
-                    - More accuracy
-                        - Able to detect person with confidence threshold 0.5
-                - SSD
-                    - Use less memory
-                        - No GC collecting
-                    - Less accuracy
-                        - Able to detect person with confidence threshold 0.3
+            % Conclusion and tasking about recompile model and NEON
+            The performance of multithreading is slightly improved,
+            and it is not able to achieve theoretical speedup of Amdahl's law by using multithreading.
 
         \subsection{NEON Comparison}
         \begin{table}[!htp]\centering
@@ -166,21 +195,6 @@
 
             \caption{Video Processing with MobileNet SSD Model with NEON}\label{ssd:neon-performance}
         \end{table}
-
-        % Memory Usgae
-        \begin{figure}[!ht]
-            \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting.png}
-            \caption{YOLO Model's Memory Usage}
-            \label{yolo:memoryUsage}
-        \end{figure}
-
-        % CPU Usage
-        \begin{figure}[!ht]
-            \includegraphics[width=6in]{images/chapter5/YOLO/cpu-usage-8threads.png}
-            \caption{YOLO Model's CPU Usage}
-            \label{yolo:cpuUsage}
-        \end{figure}
-
     % Summary
         - MobileNet is faster, but less accuracy.
 
