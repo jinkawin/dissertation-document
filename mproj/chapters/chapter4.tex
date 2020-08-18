@@ -3,25 +3,14 @@
     In this chapter, the implementation details of each modules will be explained.
 
     \section{Android Application}
-        This application is implemented on the Android Operating System, and the target Software Development Kit (SDK) version is set at level 29, namely Android Q.
-        Implementation is divided into 3 layers.
-            The first layer is an application layer, which is written in Java.
-                This Layer mainly interacts with a user, checks permissions, and communicates with Java Native Interface (JNI).
-                In addition, this layer also handle I/O implementation such as camera, file, and storage.
-            The second layer is JNI, which is written in C and C++.
-                JNI layer performs 2 main tasks.
-                    The fist task is being an intermediate connection between the application layer and a library layer.
-                    The second task is loading native shared libraries, which is compiled by a Native Development Kit (NDK).
-            The last layer is the library layer, which is written in C++.
-                This layer performs calculation tasks, including Deep Neural Network and distance calculation.
-
-        However, Deep Neural Network and distance calculation can be implemented in the application layer,
-        but executing both tasks in the library layer gains a better performance. There are 2 reasons of increasing performance.
-            The first reason is reducing JNI calling. Performing both tasks have to call JNI methods many times, and calling JNI methods are expensive and cost an overhead.
-                Thus, implementing JNI manually reduces the number of JNI calls.
-            The second reason is memory management. C++ is able to access values in the memory by using a pointer.
-                Thus, values can be directly used without copying.
-            %  The last reason is SIMD (NEON)
+            According to Android Developer Guide \cite{ANDROID-01},
+            Native Development Kit (NDK) is recommended for compiling C and C++ coode into native library,
+            which is able to achieve a higher performance.
+            - Improve the performace -> directly access to memeory address by using pointer.
+            - How Java interact with C++
+                - insert code.
+            - How to show processed frame from live stream?
+                - insert image
 
     \section{Human Detection}
         -	There are 2 model which are used for doing forward propagation

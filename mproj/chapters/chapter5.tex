@@ -1,4 +1,4 @@
-\chapter{Testing and Evaluation}\label{testing}
+\chapter{Evaluation and Testing}\label{testing}
 
     This chapter presents an evaluation of the application, which is divided into 3 parts.
     The first part will show variables that must be controlled for the reliability and stability of the result.
@@ -16,8 +16,13 @@
             \item A testing video resolution will be set to 540x480 pixels.
         \end{enumerate}
 
-    \section{Performace Comparison}
-        \subsection{Model Comparison}
+    \section{Performace Evaluation}
+        In this section, the performance of detection models will be compared, and the result will be discussed.
+        Therer are 3 section of discussion. The first section will show the result of processing single frame.
+        The second section will compare the performance amoung number of threads.
+        The last section will discuss the result of NEON instruction and improvement.
+
+        \subsection{Single Frame Comparison}
             In this section, the performance of 2 detection models will be compare, regardless of other tools and techniques.
             To evaluate the performance, each model will process on a single frame.
             There are 2 different resolutions were used as inputs for comparing the performance and understanding the variation of calculation time.
@@ -110,7 +115,6 @@
                 It will be yellow when it is interrupted by GC,
                 and it will be gray when a thread has no activity.
 
-
             % CPU Usage
             \begin{figure}[!ht]
                 \includegraphics[width=6in]{images/chapter5/YOLO/cpu-usage-8threads.png}
@@ -122,7 +126,7 @@
             \begin{table}[!htp]\centering
                 \scriptsize
                 \begin{tabular}{lrrrrrrr}\toprule
-                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{SSD, OpenCV 3.4.0 Official Build} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD} \\\cmidrule{1-7}
                     \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
                     & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
                     \multicolumn{2}{c}{Total Process Time (second)} &7.132 &8.237 &6.873 &6.270 &5.064 \\
@@ -138,65 +142,134 @@
                     \bottomrule
                 \end{tabular}
 
-                \caption{Video Processing with MobileNet SSD Model with official}\label{ssd:official-performace}
+                \caption{Video Processing with MobileNet SSD Model with official build}\label{ssd:official-performace}
             \end{table}
 
             % SSD with multithreading
-            For the MobileNet SSD model, Table \ref{ssd:official-performace} compares the computation time among 1, 2, 4, and 8 threads.
-            The calculation time of 2 threads is improved only 16.56 percent, and 8 threads give the best performance with 38.53 percent.
+            For the MobileNet SSD model,
+            the calculation time of 2 threads is improved only 16.56 percent,
+            and 8 threads give the best performance with 38.53 percent as can be seen in Table \ref{ssd:official-performace}.
+            Objects is not collected by GC in this model, but memory will be freed after processing is finished.
             The improvement time of 8 threads by using MobileNet SSD model is not reduces likes YOLO model,
-            but speedup time of both models still lower than an ideal time.
+            but speed-up time of both models still lower than an ideal time.
 
             % Conclusion and tasking about recompile model and NEON
-            The performance of multithreading is slightly improved,
-            and it is not able to achieve theoretical speedup of Amdahl's law by using multithreading.
+            Although MobileNet SSD model use less memeory and has a better performance than YOLO model,
+            it is not able to achieve theoretical speed-up of Amdahl's law by using multithreading.
 
-        \subsection{NEON Comparison}
-        \begin{table}[!htp]\centering
-            \scriptsize
-            \begin{tabular}{lrrrrrrr}\toprule
-                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD without NEON} \\\cmidrule{1-7}
-                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
-                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
-                \multicolumn{2}{c}{Total Process Time (second)} &17.308 &19.030 &15.172 &11.797 &10.624 \\
-                \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
-                \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Total)} &17.193 &17.848 &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Average)} &0.555 &0.576 &0.926 &1.416 &2.462 \\
-                \multicolumn{2}{c}{Forward Propagation (Min)} &0.519 &0.545 &0.582 &0.756 &1.310 \\
-                \multicolumn{2}{c}{Forward Propagation (Max)} &0.586 &0.654 &1.412 &2.593 &5.308 \\
-                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
-                \multicolumn{2}{c}{Process per frame (second)} &0.558 &0.614 &0.489 &0.381 &0.343 \\
-                \multicolumn{2}{c}{Improvement} & & &20.27\% &38.01\% &44.17\% \\
-                \bottomrule
-            \end{tabular}
+        \subsection{Android Native Development Kit}
 
-            \caption{Video Processing with MobileNet SSD Model without NEON}\label{ssd:non-neon-performance}
-        \end{table}
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &6.773 &11.949 &6.597 &6.150 &4.954 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &6.659 &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.215 &0.382 &0.408 &0.613 &0.970 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.198 &0.363 &0.394 &0.405 &0.407 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.236 &0.401 &0.421 &1.043 &2.691 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.218 &0.385 &0.213 &0.198 &0.160 \\
+                    \multicolumn{2}{c}{Improvement} & & &44.79\% &48.53\% &58.54\% \\
+                    \bottomrule
+                \end{tabular}
 
-        \begin{table}[!htp]\centering
-            \scriptsize
-            \begin{tabular}{lrrrrrrr}\toprule
-                \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD with NEON} \\\cmidrule{1-7}
-                \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
-                & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
-                \multicolumn{2}{c}{Total Process Time (second)} &4.006 &6.079 &4.208 &3.127 &2.890 \\
-                \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
-                \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Total)} &3.927 &4.950 &- &- &- \\
-                \multicolumn{2}{c}{Forward Propagation (Average)} &0.126 &0.159 &0.225 &0.339 &0.645 \\
-                \multicolumn{2}{c}{Forward Propagation (Min)} &0.117 &0.128 &0.131 &0.190 &0.266 \\
-                \multicolumn{2}{c}{Forward Propagation (Max)} &0.135 &0.250 &0.295 &0.596 &1.798 \\
-                \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
-                \multicolumn{2}{c}{Process per frame (second)} &0.129 &0.196 &0.136 &0.101 &0.093 \\
-                \multicolumn{2}{c}{Improvement} & & &30.78\% &48.56\% &52.46\% \\
-                \bottomrule
-            \end{tabular}
+                \caption{Video Processing with MobileNet SSD Model with official build}\label{ssd:official-performace-cpp}
+            \end{table}
 
-            \caption{Video Processing with MobileNet SSD Model with NEON}\label{ssd:neon-performance}
-        \end{table}
+            % Introducetion
+            As mentioned in the chapter 4,
+            detection process and distance measurement can be writting in C++ to achieve a higher performance.
+            As it can be seen in Table \ref{ssd:official-performace-cpp},
+            the performance of using 2 threads is improved 44.79 percent when compared to using 1 thread,
+            and the performance is fasten up to 58.54 percent when using 8 threads.
+            However, there are 2 issues of this implementation.
+            The first issues is the forward propagation time.
+                Theoretically, the process time of sequential computing and using single thread should be the same.
+                In contrast, the forward propagation time of single thread was doubled,
+                which causes total process time increase.
+            The second issue is totoal process time.
+                Although writting in C++ is able to achieve theoretical speed-up,
+                the overall performance is slightly better when compared to Java.
+
+        \subsection{NEON Instruction}
+            OpenCV library provide an shared library, which is officially built by OpenCV.
+            However, library is built to support all CPU chipsets, and many features and conditions was flaged during building.
+            To evaluate the performance of NEON, library is needed to be manully built from the scratch.
+            OpenCV shared library was manually built into 2 versions: version without NEON and version with NEON.
+            To maximise the performance of NEON version, OpenCV is forced to built with NEON instruction regardless any condition,
+            and it will support only ARMv8-A 64-bit architecture.
+
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD without NEON} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &17.308 &19.030 &15.172 &11.797 &10.624 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &17.193 &17.848 &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.555 &0.576 &0.926 &1.416 &2.462 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.519 &0.545 &0.582 &0.756 &1.310 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.586 &0.654 &1.412 &2.593 &5.308 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.558 &0.614 &0.489 &0.381 &0.343 \\
+                    \multicolumn{2}{c}{Improvement} & & &20.27\% &38.01\% &44.17\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with MobileNet SSD Model without NEON}\label{ssd:non-neon-performance}
+            \end{table}
+
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD with NEON} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &4.006 &6.079 &4.208 &3.127 &2.890 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &3.927 &4.950 &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.126 &0.159 &0.225 &0.339 &0.645 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.117 &0.128 &0.131 &0.190 &0.266 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.135 &0.250 &0.295 &0.596 &1.798 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.129 &0.196 &0.136 &0.101 &0.093 \\
+                    \multicolumn{2}{c}{Improvement} & & &30.78\% &48.56\% &52.46\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with MobileNet SSD Model with NEON}\label{ssd:neon-performance}
+            \end{table}
+
+            After OpenCV library is manually built and forced to be compiled with NEON instruction,
+            the performance of human detection is significantly improved.
+            As can be seen in Table \ref{ssd:neon-performance} and \ref{ssd:neon-performance},
+            the sequential computing took 4 second for processing human detection,
+            which is faster than OpenCV without NEON 76.85 percent.
+            In addition, multithreading can process 31 frames of video up to 2.890 seconds,
+            which is faster than OpenCV without NEON 72.79 percent and OpenCV official build 42.93 percent.
+            For this performance, video can be processed 10 frames per second.
+
+
     % Summary
-        - MobileNet is faster, but less accuracy.
 
     \section{Usability Testing}
         - FPS on video
+        \begin{figure}[!ht]
+            \includegraphics[width=6in]{images/chapter5/application/picture-detection.jpg}
+            \caption{Social Distancing Detection from Picture}
+            \label{result:picture}
+        \end{figure}
+
+        \begin{figure}[!ht]
+            \includegraphics[width=6in]{images/chapter5/application/camera-detection.jpg}
+            \caption{Social Distancing Detection from Camera}
+            \label{result:camera}
+        \end{figure}
