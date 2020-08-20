@@ -35,7 +35,7 @@
             The second advantage is memory management. C++ is able to access values in the memory by using a pointer.
                 Thus, values can be directly accessed without copying.
 
-    \section{Human Detection}
+    \section{Social Distancing Detection}
         % Intro to detection
         There are 3 main processes is implemented to determine social distancing violation from the image and video.
 
@@ -47,6 +47,13 @@
         Colour will be converted to RGB if the detection model is YOLO,
         while MobileNet SSD requires BGR colour model.
 
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=5in]{images/chapter3/system-overview.png}
+            \caption{Detection System Overview}
+            \label{systemOverview}
+        \end{figure}
+
         The second process is object detection.
         Detection models are setup and configured differently before processing images.
         First of all, YOLO is used with Darknet, which is an open source neural network framework,
@@ -57,54 +64,25 @@
             and its confidence level is lower than 50 percent.
             In contrast, The confidence level threshold of MobileNet SSD model will be set to 0.3 or 30 percent.
             Because of MobileNet SSD model has a lower ability to detect an object, the confidence threshold is set to be lower.
-
         After models are setup and configured, the image will be processed in 5 steps.
         For the first step, pre-processed image will be convert to input blob by passing Mat image to $blobFromImage()$ function with scale factor.
             Blob will be used for the forward propagation in the neural network.
-        Secondly, blob will be passed to the network through $forward()$ function, and a list of detected boxes
+        Secondly, blob will be passed to the network through $forward()$ function,
+            and the network's output is a list of detected boxes with a label and a confidence level.
+        Then, detected objects will be classified.
+            Non-human objects will be removed by considering the label of the detected object.
+        After that, a confidence level will be filtered by considering the threshold that is set in the configuration step.
+        Finally, $NMSBoxes()$ performs non-maximum suppression, which will reduce overlapping detected boxes.
 
-
-\begin{lstlisting}
-    for i:=maxint to 0 do
-    begin
-    { do nothing }
-    end;
-    Write('Case insensitive ');
-    Write('Pascal keywords.');
-\end{lstlisting}
-
-
-        % Load and model configuration
-
-        The first model is You Only Look Once (YOLO).
-            YOLO is used with Darknet, which is an open source neural network framework.
-            To determine the confidence level of the detected object, threshold is set to 0.5.
-            In other words, the detected object will be rejected if the confidence level of the detected object is lower than 0.5.
-        The second model is MobileNet SSD. MobileNet is used with Caffe framework.
-            The confidence threshold of MobileNet SSD will be set to 0.3.
-            The confidence threshold is set to be lower than YOLO because MobileNet SSD has a lower ability to detect an object.
-            In other words, a few number of poeple will be detected if threashold is set to 0.5.
-
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=5in]{images/chapter3/system-overview.png}
-            \caption{System Overview Diagram}
-            \label{systemOverview}
-        \end{figure}
-
-        -	How DNN is implemented
-            - DNN is implemented by using OpenCV, and there are steps of processing
-                - Video -> Image -> Mat
-                - blobFromImage
-                - setInput
-                - net.forward (forward propagation)
-                - determine classification and confidence(accuracy)
-                - NMSBox
-                - Calculate Distance
-
-            - How to show processed frame from live stream?
-            - insert image
-        - pass social distancing = green, else = red
+        The last process is determining social distancing.
+        After a list of detected object boxes is filtered,
+        the distance between each box will be calculated by using the formula which is based on Euclidean distance
+        \footnote{an explanation was given in chapter \ref{background}}.
+        If the value of the calculated distance is lower than the threshold,
+        this mean that the couple is too close, and they are breaking social distancing rule.
+        The application will change the box's colour to red.
+        In contrast, if the value of the calculation is grater than threshold,
+        there is no breaching of social distancing rule, and the box's colour will be changed to green.
 
     \section{Parallelisation}
         -	Intro about parallelisation – How it works in Android
@@ -115,14 +93,22 @@
             - <Insert diagram>
         -	1 frame per 1 thread
             - <Insert diagram>
-
-        \begin{figure}[!ht]
-            \includegraphics[width=6in]{images/chapter3/parallel.png}
-            \caption{Parallel Computing Diagram}
-            \label{systemOverview}
-        \end{figure}
+            \begin{lstlisting}
+                for i:=maxint to 0 do
+                begin
+                { do nothing }
+                end;
+                Write('Case insensitive ');
+                Write('Pascal keywords.');
+            \end{lstlisting}
 
         \subsection{Multitheading with Java}
+
+            \begin{figure}[!ht]
+                \includegraphics[width=6in]{images/chapter3/parallel.png}
+                \caption{Parallel Computing Diagram}
+                \label{systemOverview}
+            \end{figure}
             -	How to implement
                 - Using Java
                 - Thread pool
@@ -135,3 +121,4 @@
 
         \subsection{Multitheading with C++}
 
+        - How to show processed frame from live stream?
