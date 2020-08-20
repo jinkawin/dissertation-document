@@ -3,42 +3,7 @@
     This chapter aim to explain technologies, tools, and specification of a device that are used in this project.
     Then, this chapter gives an analysis of related applications.
 
-    \section{Java Native Interface}
-        This application is implemented on the Android Operating System, and the target Software Development Kit (SDK) version is set at level 29, namely Android Q.
-        Implementation is divided into 3 layers.
-            The first layer is an application layer, which is written in Java.
-                This Layer mainly interacts with a user, checks permissions, and communicates with Java Native Interface (JNI).
-                In addition, this layer also handle I/O implementation such as camera, file, and storage.
-            The second layer is JNI, which is written in C and C++.
-                JNI layer performs 2 main tasks.
-                    The fist task is being an intermediate connection between the application layer and a library layer.
-                    The second task is loading native shared libraries, which is compiled by a Native Development Kit (NDK).
-            The last layer is the library layer, which is written in C++.
-                This layer performs calculation tasks, including Deep Neural Network and distance calculation.
-
-        However, Deep Neural Network and distance calculation can be implemented in the application layer,
-        but executing both tasks in the library layer gains a better performance. There are 2 reasons of increasing performance.
-            The first reason is reducing JNI calling. Performing both tasks have to call JNI methods many times, and calling JNI methods are expensive and cost an overhead.
-                Thus, implementing JNI manually reduces the number of JNI calls.
-            The second reason is memory management. C++ is able to access values in the memory by using a pointer.
-                Thus, values can be directly used without copying.
-
-        % -	What is Android
-        %     - An open source OS, support mobiles, tablets, watches, TVs, Cars’ system [http://tinyurl.com/yag8kyst]
-        % -	Android development
-        %     - IDE -> Android studio which provides SDKs and tools
-        %     - Native application -> Java and Kolin
-        %     - Native language -> C and C++
-        %         1.	For intensive application which require extra performance
-        %         2.	Accessing native libs (C and C++)
-        %     - Java and C++ communicate by using Java Native Interface (JNI) [https://developer.android.com/ndk/guides]
-        %         - What is JNI
-        %         - Why I need this
-
-        % -	Server (and Cloud) is replaced by Mobile Computing [http://tinyurl.com/y6vusamh]
-        % -	Mobile edge cloud [http://tinyurl.com/y7umteqg]
-
-    \section{Human Detection}
+    \section{Object Detection}
         -	People Detection
             - Using DNN
             - What is DNN
@@ -69,20 +34,14 @@
         These 2 variables will determine the depth of people in the image.
 
         \begin{figure}[!ht]
-            \includegraphics[width=6in]{images/chapter2/distance.png}
+            \includegraphics[width=6in]{images/chapter2/distance-calculation.jpg}
             \caption{Distance Calculation}
             \label{distanceCalculation}
         \end{figure}
 
-        For example, according to the figure \ref{twoDistances},
+        For example, according to the figure \ref{distanceCalculation},
         if distance is calculated without calibration, distance between 2 couples will be the same.
         Naturally, the distance between Human1 and Human2 must be further than the distance between Human3 and Human4.
-
-        \begin{figure}[!ht]
-            \includegraphics[width=6in]{images/chapter2/two-distances.png}
-            \caption{Distance Comparison}
-            \label{twoDistances}
-        \end{figure}
 
     \section{Parallel Computing}
         -	What is parallel computing \\

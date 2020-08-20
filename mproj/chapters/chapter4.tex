@@ -1,68 +1,284 @@
-\chapter{Implement}\label{implement}
+\chapter{Evaluation and Testing}\label{testing}
 
-    In this chapter, the implementation details of each modules will be explained.
+    This chapter presents an evaluation of the application, which is divided into 3 parts.
+    The first part will show variables that must be controlled for the reliability and stability of the result.
+    The second part is going to evaluate the application's performance,
+    which are comparisons among models, programming languages, and technologies.
+    The last section is going to show a usability testing of this application.
 
-    \section{Android Application}
-            According to Android Developer Guide \cite{ANDROID-01},
-            Native Development Kit (NDK) is recommended for compiling C and C++ coode into native library,
-            which is able to achieve a higher performance.
-            - Improve the performace -> directly access to memeory address by using pointer.
-            - How Java interact with C++
-                - insert code.
-            - How to show processed frame from live stream?
-                - insert image
+    \section{Controlled Variables}
+        To ensure the result of the performance will not be varied by other factors, some variables must be controlled as following:
+        \begin{enumerate}
+            \item All testing cases will be run on Samsung Galaxy S10+.
+            \item All running background applications will be closed, and memory will be freed before testing.
+            \item To prevent CPU's speed is limited, a power management mode will be set to "Optimized".
+            \item Total number of frames in the testing video will be set to 31 frames.
+            \item A testing video resolution will be set to 540x480 pixels.
+        \end{enumerate}
 
-    \section{Human Detection}
-        -	There are 2 model which are used for doing forward propagation
-            - YOLO3 Model
-            - Mobilenet SSD Model
-            - Confidence threashold  level
-                - YOLO Able to detect person with confidence threshold 0.5
-                - SSD Able to detect person with confidence threshold 0.3
+    \section{Performace Evaluation}
+        In this section, the performance of detection models will be compared, and the result will be discussed.
+        Therer are 3 section of discussion. The first section will show the result of processing single frame.
+        The second section will compare the performance amoung number of threads.
+        The last section will discuss the result of NEON instruction and improvement.
 
-        -	How DNN is implemented
-            - DNN is implemented by using OpenCV, and there are steps of processing
-                - Video -> Image -> Mat
-                - blobFromImage
-                - setInput
-                - net.forward (forward propagation)
-                - determine classification and confidence(accuracy)
-                - NMSBox
-                - Calculate Distance
+        \subsection{Single Frame Comparison}
+            In this section, the performance of 2 detection models will be compare, regardless of other tools and techniques.
+            To evaluate the performance, each model will process on a single frame.
+            There are 2 different resolutions were used as inputs for comparing the performance and understanding the variation of calculation time.
 
-        \section{Distance Calculation}
-            -	There are 2 model which are used for doing forward propagation
-                - YOLO3 Model
-                - Mobilenet SSD Model
+            % Picture Performance Table
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{2}{c}{YOLO} &\multicolumn{2}{c}{SSD} \\\midrule
+                    \multicolumn{2}{c}{Size} &960×540 &540x480 &960×540 &540x480 \\
+                    \multicolumn{2}{c}{Total Process Time (second)} &4.235 &3.827 &0.337 &0.323 \\
+                    \multicolumn{2}{c}{Forward Propagation per frame (second)} &3.456 &3.019 &0.284 &0.278 \\
+                    \multicolumn{2}{c}{Forward Propagation per frame (perenctage)} &81.61\% &78.89\% &84.27\% &86.07\% \\
+                    \bottomrule
+                \end{tabular}
 
-            -	How DNN is implemented
-                - DNN is implemented by using OpenCV, and there are steps of processing
-                    - Video -> Image -> Mat
-                    - blobFromImage
-                    - setInput
-                    - net.forward (forward propagation)
-                    - determine classification and confidence(accuracy)
-                    - NMSBox
-                    - Calculate Distance
+                \caption{Picture Processing Performace}\label{performance:picture}
+            \end{table}
 
-    \section{Parallelisation}
-        -	Intro about parallelisation – How it works in Android
-            - Thread vs ThreadPool
-            - Handler
-        -	Multithreading and Multicore
-        -	System overview (Manager – Task – Runnable)
-            - <Insert diagram>
-        -	1 frame per 1 thread
-            - <Insert diagram>
+            As can be seen from the Table \ref{performance:picture}, the processing time of YOLO model significantly increases when the size of the picture is greater.
+            In contrast, MobileNet SSD is able to process the given picture faster than YOLO model.
+            The processing time of MobileNet SSD slightly increases when the size of the picture is increased.
 
-        \subsection{Multitheading with CPU}
-            -	How to implement
-                - Using Java
-                - Thread pool
-                    <insert sample of code>
-            -	Memory Management
-                - Singleton Pattern
-                - Static block
-                    - Executed only once
-                - Queue and recycling
+        \subsection{Multithreading}
 
+            % Introduction
+            In this section, the performance of both models will be evaluated with multithreading technique,
+            and the evaluation will be divided into 3 parts: sequential computing, YOLO with multithreading, and MobileNet SSD with multithreading.
+            As mentions previous section, in this evaluation, controlled variables are set.
+            The number of frames in the testing video will be set to 31 frames.
+
+            % Sequential Programming
+            For the first part, an application will process the testing video sequentially, and measure the performance.
+            This measurement will be compared to multithreading, and evaluate the improvement of the performance.
+            As a result in Table \ref{performance:picture} and \ref{yolo:official-performace},
+            YOLO model took 102.972 seconds to processed 31 frames video, while MobileNet SSD model took 7.132 seconds.
+            However, even if MobileNet SSD model can achieve better performance than YOLO model,
+            the application is not able to process a video in real-time.
+
+            % YOLO Model Performace Table
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{YOLO} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &102.972 &117.805 &96.415 &92.242 &99.441 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &0.102 &0.280 &2.024 &11.333 \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &117.703 &96.136 &90.218 &88.108 \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &79.097 &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &2.553 &2.872 &4.840 &9.231 &19.713 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &2.213 &2.564 &4.003 &5.478 &14.733 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &2.693 &3.092 &6.436 &12.566 &21.815 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &3.322 &3.800 &3.110 &2.976 &3.208 \\
+                    \multicolumn{2}{c}{Improvement} & & &18.16\% &21.70\% &15.59\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with YOLO Model with official build}\label{yolo:official-performace}
+            \end{table}
+
+            % Introduction to Multithreading
+            Then, a multithreading technique is implemented to increase performance and achieve real-time processing.
+            To evaluate the improvement of multithreading, a number of processors will be doubled as follows: 1, 2, 4, 8, and 16.
+            In the testing device, there are 8 physical cores, so it can effectively process up to 8 threads.
+
+            % Memory Usgae
+            \begin{figure}[!ht]
+                \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting.png}
+                \caption{Memory Usage of YOLO Model with 8 threads}
+                \label{yolo:memoryUsage}
+            \end{figure}
+
+            % YOLO with multithreading
+            The overall performace of YOLO model with multithreading is slightly improved.
+            There are 2 problems of YOLO model with multithreading as shown in Table \ref{yolo:official-performace}.
+            The first problem is the improvement of the performance.
+                The performance of 2 threads is improved only 18.16 percent, and it reach the best performance at 21.7 percent by using 4 threads.
+                However, the performance of 8 threads is worse than 2 threads, which is caused by Garbage Collection.
+            The second problem is Garbage Collection (GC).
+                The application was frozen while GC is collecting garbage.
+                GC is not collecting only short-lived objects but long-lived objects as well,
+                and GC is more often collect garbage when the number of threads is increased.
+                As shown in Figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
+                and GC was freeing these allocation 10 times within 5 seconds.
+                Consequently, CPU usage is dropped when GC is working.
+                This problem can be seen in the Figure \ref{yolo:cpuUsage}.
+                The progress status will be green when a thread is working.
+                It will be yellow when it is interrupted by GC,
+                and it will be gray when a thread has no activity.
+
+            % CPU Usage
+            \begin{figure}[!ht]
+                \includegraphics[width=6in]{images/chapter5/YOLO/cpu-usage-8threads.png}
+                \caption{CPU Usage of YOLO Model with 8 threads}
+                \label{yolo:cpuUsage}
+            \end{figure}
+
+            % SSD Model Performace Table
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &7.132 &8.237 &6.873 &6.270 &5.064 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &7.019 &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.226 &0.235 &0.401 &0.738 &1.133 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.218 &0.212 &0.353 &0.406 &0.466 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.243 &0.320 &0.456 &1.477 &2.582 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.230 &0.266 &0.222 &0.202 &0.163 \\
+                    \multicolumn{2}{c}{Improvement} & & &16.56\% &23.88\% &38.52\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with MobileNet SSD Model with official build}\label{ssd:official-performace}
+            \end{table}
+
+            % SSD with multithreading
+            For the MobileNet SSD model,
+            the calculation time of 2 threads is improved only 16.56 percent,
+            and 8 threads give the best performance with 38.53 percent as can be seen in Table \ref{ssd:official-performace}.
+            Objects is not collected by GC in this model, but memory will be freed after processing is finished.
+            The improvement time of 8 threads by using MobileNet SSD model is not reduces likes YOLO model,
+            but speed-up time of both models still lower than an ideal time.
+
+            % Conclusion and tasking about recompile model and NEON
+            Although MobileNet SSD model use less memeory and has a better performance than YOLO model,
+            it is not able to achieve theoretical speed-up of Amdahl's law by using multithreading.
+
+        \subsection{Android Native Development Kit}
+
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &6.773 &11.949 &6.597 &6.150 &4.954 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &6.659 &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.215 &0.382 &0.408 &0.613 &0.970 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.198 &0.363 &0.394 &0.405 &0.407 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.236 &0.401 &0.421 &1.043 &2.691 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.218 &0.385 &0.213 &0.198 &0.160 \\
+                    \multicolumn{2}{c}{Improvement} & & &44.79\% &48.53\% &58.54\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with MobileNet SSD Model with official build}\label{ssd:official-performace-cpp}
+            \end{table}
+
+            % Introducetion
+            As mentioned in the chapter 4,
+            detection process and distance measurement can be writting in C++ to achieve a higher performance.
+            As it can be seen in Table \ref{ssd:official-performace-cpp},
+            the performance of using 2 threads is improved 44.79 percent when compared to using 1 thread,
+            and the performance is fasten up to 58.54 percent when using 8 threads.
+            However, there are 2 issues of this implementation.
+            The first issues is the forward propagation time.
+                Theoretically, the process time of sequential computing and using single thread should be the same.
+                In contrast, the forward propagation time of single thread was doubled,
+                which causes total process time increase.
+            The second issue is totoal process time.
+                Although writting in C++ is able to achieve theoretical speed-up,
+                the overall performance is slightly better when compared to Java.
+
+        \subsection{NEON Instruction}
+            OpenCV library provide an shared library, which is officially built by OpenCV.
+            However, library is built to support all CPU chipsets, and many features and conditions was flaged during building.
+            To evaluate the performance of NEON, library is needed to be manully built from the scratch.
+            OpenCV shared library was manually built into 2 versions: version without NEON and version with NEON.
+            To maximise the performance of NEON version, OpenCV is forced to built with NEON instruction regardless any condition,
+            and it will support only ARMv8-A 64-bit architecture.
+
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD without NEON} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Parallel Computing} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &17.308 &19.030 &15.172 &11.797 &10.624 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &17.193 &17.848 &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.555 &0.576 &0.926 &1.416 &2.462 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.519 &0.545 &0.582 &0.756 &1.310 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.586 &0.654 &1.412 &2.593 &5.308 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.558 &0.614 &0.489 &0.381 &0.343 \\
+                    \multicolumn{2}{c}{Improvement} & & &20.27\% &38.01\% &44.17\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with MobileNet SSD Model without NEON}\label{ssd:non-neon-performance}
+            \end{table}
+
+            \begin{table}[!htp]\centering
+                \scriptsize
+                \begin{tabular}{lrrrrrrr}\toprule
+                    \multicolumn{2}{c}{Model} &\multicolumn{5}{c}{MobileNet SSD with NEON} \\\cmidrule{1-7}
+                    \multicolumn{2}{c}{\multirow{2}{*}{}} &\multirow{2}{*}{Sequential Computing} &\multicolumn{4}{c}{Multithreading} \\\cmidrule{4-7}
+                    & & &1 Thread &2 Threads &4 Threads &8 Threads \\\midrule
+                    \multicolumn{2}{c}{Total Process Time (second)} &4.006 &6.079 &4.208 &3.127 &2.890 \\
+                    \multicolumn{2}{c}{Garbage Collector (second)} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Process Time without GC} &- &- &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Total)} &3.927 &4.950 &- &- &- \\
+                    \multicolumn{2}{c}{Forward Propagation (Average)} &0.126 &0.159 &0.225 &0.339 &0.645 \\
+                    \multicolumn{2}{c}{Forward Propagation (Min)} &0.117 &0.128 &0.131 &0.190 &0.266 \\
+                    \multicolumn{2}{c}{Forward Propagation (Max)} &0.135 &0.250 &0.295 &0.596 &1.798 \\
+                    \multicolumn{2}{c}{Number of frame} &31 &31 &31 &31 &31 \\
+                    \multicolumn{2}{c}{Process per frame (second)} &0.129 &0.196 &0.136 &0.101 &0.093 \\
+                    \multicolumn{2}{c}{Improvement} & & &30.78\% &48.56\% &52.46\% \\
+                    \bottomrule
+                \end{tabular}
+
+                \caption{Video Processing with MobileNet SSD Model with NEON}\label{ssd:neon-performance}
+            \end{table}
+
+            After OpenCV library is manually built and forced to be compiled with NEON instruction,
+            the performance of human detection is significantly improved.
+            As can be seen in Table \ref{ssd:neon-performance} and \ref{ssd:neon-performance},
+            the sequential computing took 4 second for processing human detection,
+            which is faster than OpenCV without NEON 76.85 percent.
+            In addition, multithreading can process 31 frames of video up to 2.890 seconds,
+            which is faster than OpenCV without NEON 72.79 percent and OpenCV official build 42.93 percent.
+            For this performance, video can be processed 10 frames per second.
+
+
+    % Summary
+
+    \section{Usability Testing}
+        Moving on now to consider the usability of this application.
+        Usability testing was divided into 2 parts.
+        The first part is determining social distancing from pre-recorded files which is obtained from Ben Benfold and Ian Reid \cite{benfold2009attention}.
+        The second part is determining social distancing from camera.
+
+        Figure 1 shows detected people with social distancing determination.
+
+        - FPS on video
+        \begin{figure}[!ht]
+            \includegraphics[width=6in]{images/chapter5/application/picture-detection.jpg}
+            \caption{Social Distancing Detection from Picture}
+            \label{result:picture}
+        \end{figure}
+
+        With multithread processing, camera is able to capture the frame around 25 frames per second.
+
+        \begin{figure}[!ht]
+            \includegraphics[width=3in]{images/chapter5/application/camera-detection.jpg}
+            \caption{Social Distancing Detection from Camera}
+            \label{result:camera}
+        \end{figure}
