@@ -6,15 +6,25 @@
 \usepackage[final]{pdfpages}
 \usepackage{times}
 \usepackage{listings}
-
-\usepackage{booktabs, multirow} % for borders and merged ranges
-\usepackage{soul}% for underlines
-% \usepackage[table]{xcolor} % for cell colors
-\usepackage{changepage,threeparttable} % for wide tables
-
+\usepackage{xcolor}
+\usepackage{booktabs, multirow}
+\usepackage{soul}
+\usepackage{changepage,threeparttable}
 \usepackage{amsmath}
-
 \usepackage{enumitem}
+
+\lstset {
+    language=C++,
+    backgroundcolor=\color{black!5},
+    basicstyle=\footnotesize,
+    numbers=left,
+    stepnumber=1,
+    showstringspaces=false,
+    tabsize=1,
+    breaklines=true,
+    breakatwhitespace=false,
+}
+
 \setlist{nolistsep}
 
 % for alternative page numbering use the following package

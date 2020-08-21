@@ -13,27 +13,54 @@
 
     \section{Java Native Interface}
         Implementation is divided into 3 layers.
-            The first layer is an application layer, which is written in Java.
-                This Layer mainly interacts with a user, checks permissions, and communicates with Java Native Interface (JNI).
-                In addition, this layer also handle I/O implementation such as camera, file, and storage.
-            The second layer is JNI, which is written in C and C++.
-                JNI layer performs 2 main tasks.
-                    The fist task is being an intermediate connection between the application layer and a library layer.
-                    The second task is loading native shared libraries, which is compiled by a Native Development Kit (NDK).
-            The last layer is the library layer, which is written in C++.
-                This layer performs calculation tasks, including Deep Neural Network and distance calculation.
+            The first layer is a Java layer, which mainly interacts with a user,
+            checks permissions, handles activity lifecycle, communicates with Java Native Interface (JNI), and loads native libraries.
+                native libraries are compiled and built into shared libraries by a Native Development Kit (NDK).
+            The second layer is JNI, which is written in C or C++.
+                The task of JNI layer is being an intermediate connection between the Java layer and a C++ layer.
+            The last layer is the C++ layer, which alternatively performs calculation tasks,
+            including Deep Neural Network and distance calculation.
 
-        However, Deep Neural Network and distance calculation can be implemented in the application layer,
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=4in]{images/chapter3/application-layers.png}
+            \caption{Application Layers}
+            \label{systemOverview}
+        \end{figure}
+
+        However, Deep Neural Network and distance calculation can be implemented in all layers.
         According to Android Developer Guide \cite{ANDROID-01},
         Native Development Kit (NDK) is recommended for compiling C and C++ coode into native library,
         which is able to achieve a higher performance.
-        Thus, executing both tasks in the library layer gains a better performance.
+        Thus, executing both tasks in the JNI and C++ layer gains a better performance.
         Furthermore, there are 2 advantages of implementing JNI.
             The first advantage is reducing JNI calling. Performing both tasks in an application layer have to call JNI methods many times,
                 and this is expensive and cost an overhead.
                 Thus, implementing JNI manually reduces the number of JNI calls.
             The second advantage is memory management. C++ is able to access values in the memory by using a pointer.
                 Thus, values can be directly accessed without copying.
+
+        Java and JNI communicate through native function, which is written in Java layer.
+        Memory addresses of pre-processed frame in Mat format will be pass as parameter through native function,
+        and it will be converted from Java type to Native type.
+        Then, the given addresses will be converted back into Mat format.
+
+\begin{lstlisting}[caption={Java Native Function},captionpos=b]
+    public class NativeLib {
+        static {
+            System.loadLibrary("native-lib");
+        }
+
+        public native static void process(long imageAddr);
+    }
+\end{lstlisting}
+
+\begin{lstlisting}[caption={C++ JNI Method},captionpos=b]
+    Java_com_jinkawin_dissertation_NativeLib_process(jlong matAddr){
+        Mat &frame = *(Mat *) matAddr;
+        ImageProcessor::process(frame);
+    }
+\end{lstlisting}
 
     \section{Social Distancing Detection}
         % Intro to detection
@@ -85,40 +112,43 @@
         there is no breaching of social distancing rule, and the box's colour will be changed to green.
 
     \section{Parallelisation}
-        -	Intro about parallelisation – How it works in Android
-            - Thread vs ThreadPool
-            - Handler
-        -	Multithreading and Multicore
-        -	System overview (Manager – Task – Runnable)
-            - <Insert diagram>
-        -	1 frame per 1 thread
-            - <Insert diagram>
-            \begin{lstlisting}
-                for i:=maxint to 0 do
-                begin
-                { do nothing }
-                end;
-                Write('Case insensitive ');
-                Write('Pascal keywords.');
-            \end{lstlisting}
+        Multithreading is used to reduce the processing time, which can achieve nearly real-time processing.
+        The strategy of multithreading is dividing an input video into frames,
+        and assign frames to threads by considering a number of available cores.
 
         \subsection{Multitheading with Java}
+
+            To begin with, a processor manager is implemented for managing threads efficiently.
+            To ensure that the processor manager will be created at once,
+            the processor manager is designed with singleton pattern and static block.
+            Thread pool and queues are fundamental operators in the processor manager.
+            As can be seen in figure \ref{parallelJava}, frames in Mat format will be assigned as a task and queued in TaskQueue.
+            Then, tasks will be mapped with thread orderly by the thread pool.
+            A working thread will process the given task.
+            After a thread finished the given task,
+            the thread will write a log regarding social distancing detection, and notify the processor manager.
+            Then, a task will be recyled to free up memory.
+            When the processor manager receive a notification from workers,
+            a processed frame will be retrieved and ordered in the priority queue.
+            After the process manager retrieved all processed frames,
+            the process manager will notify the main activity.
+            All of these processes are run in the background to avoid a frozen application.
 
             \begin{figure}[!ht]
                 \includegraphics[width=6in]{images/chapter3/parallel.png}
                 \caption{Parallel Computing Diagram}
-                \label{systemOverview}
+                \label{parallelJava}
             \end{figure}
-            -	How to implement
-                - Using Java
-                - Thread pool
-                    <insert sample of code>
-            -	Memory Management
-                - Singleton Pattern
-                - Static block
-                    - Executed only once
-                - Queue and recycling
 
         \subsection{Multitheading with C++}
+
+\begin{lstlisting}
+    virtual void operator()(const cv::Range& range) const{
+        for (size_t i = range.start; i < size; i += threadNo){
+            cv::Mat &frame = *(cv::Mat *) frames[i];
+            ImageProcessor::process(frame);
+        }
+    }
+\end{lstlisting}
 
         - How to show processed frame from live stream?

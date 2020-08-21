@@ -42,7 +42,7 @@
                 \caption{Picture Processing Performace}\label{performance:picture}
             \end{table}
 
-            As can be seen from the Table \ref{performance:picture}, the processing time of YOLO model significantly increases when the size of the picture is greater.
+            As can be seen from table \ref{performance:picture}, the processing time of YOLO model significantly increases when the size of the picture is greater.
             In contrast, MobileNet SSD is able to process the given picture faster than YOLO model.
             The processing time of MobileNet SSD slightly increases when the size of the picture is increased.
 
@@ -57,7 +57,7 @@
             % Sequential Programming
             For the first part, an application will process the testing video sequentially, and measure the performance.
             This measurement will be compared to multithreading, and evaluate the improvement of the performance.
-            As a result in Table \ref{performance:picture} and \ref{yolo:official-performace},
+            As a result in table \ref{performance:picture} and \ref{yolo:official-performace},
             YOLO model took 102.972 seconds to processed 31 frames video, while MobileNet SSD model took 7.132 seconds.
             However, even if MobileNet SSD model can achieve better performance than YOLO model,
             the application is not able to process a video in real-time.
@@ -99,7 +99,7 @@
 
             % YOLO with multithreading
             The overall performace of YOLO model with multithreading is slightly improved.
-            There are 2 problems of YOLO model with multithreading as shown in Table \ref{yolo:official-performace}.
+            There are 2 problems of YOLO model with multithreading as shown in table \ref{yolo:official-performace}.
             The first problem is the improvement of the performance.
                 The performance of 2 threads is improved only 18.16 percent, and it reach the best performance at 21.7 percent by using 4 threads.
                 However, the performance of 8 threads is worse than 2 threads, which is caused by Garbage Collection.
@@ -107,10 +107,10 @@
                 The application was frozen while GC is collecting garbage.
                 GC is not collecting only short-lived objects but long-lived objects as well,
                 and GC is more often collect garbage when the number of threads is increased.
-                As shown in Figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
+                As shown in figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
                 and GC was freeing these allocation 10 times within 5 seconds.
                 Consequently, CPU usage is dropped when GC is working.
-                This problem can be seen in the Figure \ref{yolo:cpuUsage}.
+                This problem can be seen in the figure \ref{yolo:cpuUsage}.
                 The progress status will be green when a thread is working.
                 It will be yellow when it is interrupted by GC,
                 and it will be gray when a thread has no activity.
@@ -148,7 +148,7 @@
             % SSD with multithreading
             For the MobileNet SSD model,
             the calculation time of 2 threads is improved only 16.56 percent,
-            and 8 threads give the best performance with 38.53 percent as can be seen in Table \ref{ssd:official-performace}.
+            and 8 threads give the best performance with 38.53 percent as can be seen in table \ref{ssd:official-performace}.
             Objects is not collected by GC in this model, but memory will be freed after processing is finished.
             The improvement time of 8 threads by using MobileNet SSD model is not reduces likes YOLO model,
             but speed-up time of both models still lower than an ideal time.
@@ -184,7 +184,7 @@
             % Introducetion
             As mentioned in the chapter 4,
             detection process and distance measurement can be writting in C++ to achieve a higher performance.
-            As it can be seen in Table \ref{ssd:official-performace-cpp},
+            As it can be seen in table \ref{ssd:official-performace-cpp},
             the performance of using 2 threads is improved 44.79 percent when compared to using 1 thread,
             and the performance is fasten up to 58.54 percent when using 8 threads.
             However, there are 2 issues of this implementation.
@@ -250,7 +250,7 @@
 
             After OpenCV library is manually built and forced to be compiled with NEON instruction,
             the performance of human detection is significantly improved.
-            As can be seen in Table \ref{ssd:neon-performance} and \ref{ssd:neon-performance},
+            As can be seen in table \ref{ssd:neon-performance} and \ref{ssd:neon-performance},
             the sequential computing took 4 second for processing human detection,
             which is faster than OpenCV without NEON 76.85 percent.
             In addition, multithreading can process 31 frames of video up to 2.890 seconds,
