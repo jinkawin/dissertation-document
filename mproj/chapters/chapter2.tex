@@ -15,7 +15,7 @@
 
         \begin{figure}[!ht]
             \centering
-            \includegraphics[width=4in]{images/chapter2/thread-overview.png}
+            \includegraphics[width=3in]{images/chapter2/thread-overview.png}
             \caption{Threading Overview}
             \label{thread-overview}
         \end{figure}
@@ -30,23 +30,12 @@
 
         UI thread and background thread are running on different threads;
         thus, handler is needed when there is communication between these threads.
-
-        as shown in figure \ref{thread-overview}
-
-        - Background thread communicate with UI thread
-            - handler
-
-
-    \section{Object Detection}
-        -	People Detection
-            - Using DNN
-            - What is DNN
-            - How it works
-            - How it works in this project
-                - Insert diagram of DNN (Flow of Image Processing)
-                    - blobFronImage
-                    - forward
-                    - ...
+        For example, as shown in figure \ref{thread-overview},
+        processes are divided into 2 parts: foreground and background.
+        Tasks are created by a manager which is running on the UI thread.
+        Then, Runnable, a component that is able to be run by background threads, will read tasked.
+        After that, Runnable will be executed by background threads.
+        Finally, Runnable will notify the manager through Handler.
 
     \section{Distance Calculation}\label{sectionDistanceCalculation}
         According to Gurucharan \cite{SOCIAL-DISTANCING-DETECTION}, to measure a distance between 2 people, the reference point of people are used for calculation.
@@ -68,17 +57,17 @@
         The second variable is $c$, which is a calibration.
         These 2 variables will determine the depth of people in the image.
 
-        \begin{figure}
+        \begin{figure}[h!]
             \centering
             \begin{subfigure}{.5\textwidth}
               \centering
-              \includegraphics[width=3in]{images/chapter2/distance.png}
+              \includegraphics[width=2.5in]{images/chapter2/distance.png}
               \caption{Distance calculation}
               \label{distanceCalculation}
             \end{subfigure}%
             \begin{subfigure}{.5\textwidth}
               \centering
-              \includegraphics[width=3in]{images/chapter2/two-distances.png}
+              \includegraphics[width=2.5in]{images/chapter2/two-distances.png}
               \caption{A difference of 2 distances}
               \label{twoDistances}
             \end{subfigure}
@@ -94,7 +83,6 @@
         This application is developed and tested on following specification:
 
         \begin{table}[!htp]\centering
-            \caption{Specification}\label{tab: }
             \scriptsize
             \begin{tabular}{lrll}\toprule
                 Device              &Device             &Samsung S10+ \\ \hline
@@ -108,14 +96,18 @@
                 Memory              &RAM                &8 GB \\
                 \bottomrule
             \end{tabular}
+
+            \caption{Specification}\label{specification}
         \end{table}
 
 
     \section{Existing Applications}
         \subsection{Object Detector}
-
-            - Model: MobileNet SSD
-            - Library TensorFlow
+            Object Detector is an Android application, which is able to detect objects through a camera.
+            This application is implemented by deep learning library from TensorFlow with
+            MobileNet model. There are 2 modes in this application,
+            which are detection mode and classification mode.
+            The processing time of each frame is 250 to 300 miliseconds.
 
             \begin{figure}[!ht]
                 \centering
@@ -125,10 +117,10 @@
             \end{figure}
 
         \subsection{TensorFlow Object Detection}
-            - Model: MobileNet SSD
-            - Live Camera: Yes
-            - Native Library
-            - Library TensorFlow
+            TensorFlow Object Detection is an object detection application,
+            which is run on Android operating system.
+            TensorFlow's library is used in this application along with MobileNet model.
+            This application is able to detect object in real-time from the camera.
 
             \begin{figure}[!ht]
                 \centering
@@ -138,20 +130,16 @@
             \end{figure}
 
         \subsection{Computer Vision Detection}
-            - 12 algorithms
-                - detect human face
+            Computer Vision Detection application operates on Android operating system.
+            This application is able to process real-time video from live camera,
+            and OpenCV is used as a library.
+            There are 12 options of algorithms, such as colour detector, canny detector, motion detector, and shape detector.
+            In addition, this application is able detect human faces and smiling faces.
+            This application is able to process around 13 frames per second.
+
             \begin{figure}[!ht]
                 \centering
                 \includegraphics[width=5in]{images/chapter2/cv-detection.jpg}
                 \caption{Computer Vision Detection}
                 \label{cv-detection}
             \end{figure}
-
-        1.	Object Detector
-            -	250-300 ms per frame
-            -	Live camera
-        2.	Computer Vision Detection
-            -	Don’t know about (ms per frame) or (frame per second)
-            -	Live camera – not smooth
-            -	Lots of features including face detection
-            -	Problem is it still delay
