@@ -3,6 +3,37 @@
     In this chapter, the implementation details will be explained in many aspects, including Java Native Interface,
     human detection, and distance calculation.
 
+    \section{MoSCoW Statement}
+
+        \subsection{Must have}
+            \begin{itemize}
+                \setlength\itemsep{1em}
+                \item The application \textbf{must} be able to detect people in the given image or video.
+                \item The application \textbf{must} be able to determind distancing between people in the given image or video.
+                \item The application \textbf{must} save the processed image of video.
+                \item The application \textbf{must} allow user to choose image or video from device's storage.
+            \end{itemize}
+
+        \subsection{Should have}
+            \begin{itemize}
+                \item The application \textbf{should} be able to stream video from camera.
+                \item The application \textbf{should} be able to show detected people on camera.
+                \item The application \textbf{should} support parallel computing.
+            \end{itemize}
+
+        \subsection{Could have}
+            \begin{itemize}
+                \item The application \textbf{could} choose computation options between sequencial or parallelism.
+                \item The application \textbf{could} support NEON techonology.
+                \item The application \textbf{could} be able to process the given tasks in background.
+            \end{itemize}
+        \subsection{Won't have}
+            \begin{itemize}
+                \item The application \textbf{won't} other objects which are not human.
+                \item The application \textbf{won't} support GPU computation.
+            \end{itemize}
+
+
     \section{Preparation}
         This application is implemented on the Android Operating System,
         and the target Software Development Kit (SDK) version is set at level 29, namely Android Q.
@@ -85,20 +116,20 @@
         Detection models are setup and configured differently before processing images.
         First of all, YOLO is used with Darknet, which is an open source neural network framework,
             while MobileNet SSD. MobileNet is used with Caffe framework.
-        Then, threshold will be set for determining the confidence level of the detected object.
-            The confidence level threshold of YOLO model will be set to 0.5 or 50 percent.
+        Then, threshold will be set for determining the confidence score of the detected object.
+            The confidence score threshold of YOLO model will be set to 0.5 or 50 percent.
             In other words, the detected object will be rejected if YOLO model cannot guarantee that a detected object is human,
-            and its confidence level is lower than 50 percent.
-            In contrast, The confidence level threshold of MobileNet SSD model will be set to 0.3 or 30 percent.
+            and its confidence score is lower than 50 percent.
+            In contrast, the confidence score threshold of MobileNet SSD model will be set to 0.3 or 30 percent.
             Because of MobileNet SSD model has a lower ability to detect an object, the confidence threshold is set to be lower.
         After models are setup and configured, the image will be processed in 5 steps.
         For the first step, pre-processed image will be convert to input blob by passing Mat image to $blobFromImage()$ function with scale factor.
             Blob will be used for the forward propagation in the neural network.
         Secondly, blob will be passed to the network through $forward()$ function,
-            and the network's output is a list of detected boxes with a label and a confidence level.
+            and the network's output is a list of detected boxes with a label and a confidence score.
         Then, detected objects will be classified.
             Non-human objects will be removed by considering the label of the detected object.
-        After that, a confidence level will be filtered by considering the threshold that is set in the configuration step.
+        After that, a confidence score will be filtered by considering the threshold that is set in the configuration step.
         Finally, $NMSBoxes()$ performs non-maximum suppression, which will reduce overlapping detected boxes.
 
         The last process is determining social distancing.
