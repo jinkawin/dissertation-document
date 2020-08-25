@@ -18,11 +18,12 @@
 
     \section{Performace Evaluation}
         In this section, the performance of detection models will be compared, and the result will be discussed.
-        Therer are 3 section of discussion. The first section will show the result of processing single frame.
-        The second section will compare the performance amoung number of threads.
+        There are 3 section of discussion. The first section will show the result of processing single frame.
+        The second section will compare the performance amoung a number of threads.
         The last section will discuss the result of NEON instruction and improvement.
         To evaluate the performance of the application, computation time and frame rate are used as a measurement.
         Frame rate is a number of frames that application can process in 1 second.
+        The sample of pre-recorded file is obtained from Ben Benfold and Ian Reid \cite{benfold2009attention}.
 
         \subsection{Single Frame Comparison}
             In this section, the performance of 2 detection models will be compare, regardless of other tools and techniques.
@@ -59,10 +60,8 @@
             % Sequential Programming
             For the first part, an application will process the testing video sequentially, and measure the performance.
             This measurement will be compared to multithreading, and evaluate the improvement of the performance.
-            As a result in table \ref{performance:picture} and \ref{yolo:official-performace},
+            As a result in table \ref{yolo:official-performace} and \ref{ssd:official-performace},
             YOLO model took 102.972 seconds to processed 31 frames video, while MobileNet SSD model took 7.132 seconds.
-            However, even if MobileNet SSD model can achieve better performance than YOLO model,
-            the application is not able to process a video in real-time.
 
             % YOLO Model Performace Table
             \begin{table}[!htp]\centering
@@ -89,40 +88,8 @@
 
             % Introduction to Multithreading
             Then, a multithreading technique is implemented to increase performance and achieve real-time processing.
-            To evaluate the improvement of multithreading, a number of processors will be doubled as follows: 1, 2, 4, 8, and 16.
+            To evaluate the improvement of multithreading, a number of processors will be doubled as follows: 1, 2, 4, and 8.
             In the testing device, there are 8 physical cores, so it can effectively process up to 8 threads.
-
-            % Memory Usgae
-            \begin{figure}[!ht]
-                \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting.png}
-                \caption{Memory Usage of YOLO Model with 8 threads}
-                \label{yolo:memoryUsage}
-            \end{figure}
-
-            % YOLO with multithreading
-            The overall performace of YOLO model with multithreading is slightly improved.
-            There are 2 problems of YOLO model with multithreading as shown in table \ref{yolo:official-performace}.
-            The first problem is the improvement of the performance.
-                The performance of 2 threads is improved only 18.16 percent, and it reach the best performance at 21.7 percent by using 4 threads.
-                However, the performance of 8 threads is worse than 2 threads, which is caused by Garbage Collection.
-            The second problem is Garbage Collection (GC).
-                The application was frozen while GC is collecting garbage.
-                GC is not collecting only short-lived objects but long-lived objects as well,
-                and GC is more often collect garbage when the number of threads is increased.
-                As shown in figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
-                and GC was freeing these allocation 10 times within 5 seconds.
-                Consequently, CPU usage is dropped when GC is working.
-                This problem can be seen in the figure \ref{yolo:cpuUsage}.
-                The progress status will be green when a thread is working.
-                It will be yellow when it is interrupted by GC,
-                and it will be gray when a thread has no activity.
-
-            % CPU Usage
-            \begin{figure}[!ht]
-                \includegraphics[width=6in]{images/chapter5/YOLO/cpu-usage-8threads.png}
-                \caption{CPU Usage of YOLO Model with 8 threads}
-                \label{yolo:cpuUsage}
-            \end{figure}
 
             % SSD Model Performace Table
             \begin{table}[!htp]\centering
@@ -147,16 +114,49 @@
                 \caption{Video Processing with MobileNet SSD Model with official build}\label{ssd:official-performace}
             \end{table}
 
+            % YOLO with multithreading
+            The overall performace of YOLO model with multithreading is slightly improved.
+
+            As shown in table \ref{yolo:official-performace},
+                the performance of 2 threads is improved only 18.16 percent,
+                and it reach the best performance at 21.7 percent by using 4 threads.
+            However, the performance of 8 threads is worse than 2 threads.
+                One of the factors is Garbage Collection (GC).
+                The application was frozen while GC is collecting garbage.
+            GC is not collecting only short-lived objects but long-lived objects as well,
+                and GC is more often collect garbage when the number of threads is increased.
+            As shown in figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
+                and GC was freeing these allocation 10 times within 5 seconds.
+            Consequently, CPU usage is dropped when GC is working.
+                This problem can be seen in the figure \ref{yolo:cpuUsage}.
+                The progress status will be green when a thread is working.
+                It will be yellow when a thread is interrupted by GC,
+                and it will be gray when a thread has no activity.
+
+            % CPU Usage
+            \begin{figure}[!ht]
+                \includegraphics[width=6in]{images/chapter5/YOLO/cpu-usage-8threads.png}
+                \caption{CPU Usage of YOLO Model with 8 threads}
+                \label{yolo:cpuUsage}
+            \end{figure}
+
+            % Memory Usgae
+            \begin{figure}[!ht]
+                \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting.png}
+                \caption{Memory Usage of YOLO Model with 8 threads}
+                \label{yolo:memoryUsage}
+            \end{figure}
+
             % SSD with multithreading
             For the MobileNet SSD model,
             the calculation time of 2 threads is improved only 16.56 percent,
             and 8 threads give the best performance with 38.53 percent as can be seen in table \ref{ssd:official-performace}.
             Objects is not collected by GC in this model, but memory will be freed after processing is finished.
-            The improvement time of 8 threads by using MobileNet SSD model is not reduces likes YOLO model,
+            The improvement computation time of 8 threads by using MobileNet SSD model is better than YOLO model,
             but speed-up time of both models still lower than an ideal time.
 
             % Conclusion and tasking about recompile model and NEON
-            Although MobileNet SSD model use less memeory and has a better performance than YOLO model,
+            Although MobileNet SSD model use less memory and has a better performance than YOLO model,
             it is not able to achieve theoretical speed-up of Amdahl's law by using multithreading.
 
         \subsection{Android Native Development Kit}
@@ -184,7 +184,7 @@
             \end{table}
 
             % Introducetion
-            As mentioned in the chapter 4,
+            As mentioned in the chapter \ref{implement},
             detection process and distance measurement can be writting in C++ to achieve a higher performance.
             As it can be seen in table \ref{ssd:official-performace-cpp},
             the performance of using 2 threads is improved 44.79 percent when compared to using 1 thread,
@@ -202,7 +202,7 @@
             OpenCV library provide an shared library, which is officially built by OpenCV.
             However, library is built to support all CPU chipsets, and many features and conditions was flaged during building.
             To evaluate the performance of NEON, library is needed to be manully built from the scratch.
-            OpenCV shared library was manually built into 2 versions: version without NEON and version with NEON.
+            OpenCV shared library was manually built into 2 versions: version with NEON and version without NEON.
             To maximise the performance of NEON version, OpenCV is forced to built with NEON instruction regardless any condition,
             and it will support only ARMv8-A 64-bit architecture.
 
@@ -252,51 +252,20 @@
 
             After OpenCV library is manually built and forced to be compiled with NEON instruction,
             the performance of human detection is significantly improved.
-            As can be seen in table \ref{ssd:neon-performance} and \ref{ssd:neon-performance},
+            As can be seen in table \ref{ssd:non-neon-performance} and \ref{ssd:neon-performance},
             the sequential computing took 4 second for processing human detection,
             which is faster than OpenCV without NEON 76.85 percent.
             In addition, multithreading can process 31 frames of video up to 2.890 seconds,
             which is faster than OpenCV without NEON 72.79 percent and OpenCV official build 42.93 percent.
             For this performance, video can be processed 10 frames per second.
 
-
-    % Summary
-    - Summarise the result of performance
-        - I/O in thread
-            - If there is I/O operation in thread or loop, it will cost a lot of overhead
-        - Out of memory
-            - If let each thread hold the large variable, it will cost memory overhead.
-            - We have to free the variables after used. Otherwise, the x+1 th thread will allocate another xx MB.
-        - Young generation
-            - If there are lot of variables that are initialled in loop, there will be a lot young generation in the heap. So, when the number of young generations is reaching the threshold, GC will correct the young generation (freeing garbage in young generation heap) which affect the performance.
-        - GC
-            - Caused by Native [https://developer.android.com/studio/profile/memory-profiler]
-            - Bin is GC
-            - 8 GB (available only 3.8 GB)
-        - CPU hits 100% when performing tasks
-
-        - multithreading is not effective in a long-running task.
-            - threads are inturrupted.
-
-    \section{Usability Testing}
-        Moving on now to consider the usability of this application.
-        Usability testing was divided into 2 parts.
-        The first part is determining social distancing from pre-recorded files which is obtained from Ben Benfold and Ian Reid \cite{benfold2009attention}.
-        The second part is determining social distancing from camera.
-
-        Figure 1 shows detected people with social distancing determination.
-
-        - FPS on video
-        \begin{figure}[!ht]
-            \includegraphics[width=6in]{images/chapter5/application/picture-detection.jpg}
-            \caption{Social Distancing Detection from Picture}
-            \label{result:picture}
-        \end{figure}
-
-        With multithread processing, camera is able to capture the frame around 25 frames per second.
-
-        \begin{figure}[!ht]
-            \includegraphics[width=3in]{images/chapter5/application/camera-detection.jpg}
-            \caption{Social Distancing Detection from Camera}
-            \label{result:camera}
-        \end{figure}
+    % Analyse
+    However, these results were not achieve theorical,
+    and this application did not achieve processing 30 FPS even if
+    multithreading and NEON are implemented.
+    This underachieved performance could be caused by mulithreading itself.
+    A forward propagation time, which took most of the computation time, is doubled when number of threads is increased.
+        One of the issues that emerges from this finding is parallelisation in OpenCV library.
+        Some function underneath forward propagation function is parallelised by using multithreading.
+        Then, when a frame processing thread is created, number of threads may exceed the number of physical cores.
+        Thus, threads are inturrupted, and it caused an context switching overhead.

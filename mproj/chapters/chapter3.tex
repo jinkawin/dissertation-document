@@ -147,31 +147,40 @@
         The strategy of multithreading is dividing an input video into frames,
         and assign frames to threads by considering a number of available cores.
 
-        \subsection{Multitheading with Java}
+        To avoid overheads, there are 2 things will be considered while application is performing mulththreading.
+        Firstly, Input/Output (I/O) operation must be avoided from threading.
+        Secondly, all variables should be considered due to limited memory.
+            For variables, that consume a large space of heap, will be initial as static by using static block.
+            In addition, the usage of short-lived variable will be reduced to avoid garbage collecting.
+            Furthermore, a task will be recycled after thread finished processing the given frame.
 
-            To begin with, a processor manager is implemented for managing threads efficiently.
-            To ensure that the processor manager will be created at once,
-            the processor manager is designed with singleton pattern and static block.
-            Thread pool and queues are fundamental operators in the processor manager.
-            As can be seen in figure \ref{parallelJava}, frames in Mat format will be assigned as a task and queued in TaskQueue.
-            Then, tasks will be mapped with thread orderly by the thread pool.
-            A working thread will process the given task.
-            After a thread finished the given task,
-            the thread will write a log regarding social distancing detection, and notify the processor manager.
-            Then, a task will be recyled to free up memory.
-            When the processor manager receive a notification from workers,
-            a processed frame will be retrieved and ordered in the priority queue.
-            After the process manager retrieved all processed frames,
-            the process manager will notify the main activity.
-            All of these processes are run in the background to avoid a frozen application.
+        \begin{figure}[!ht]
+            \includegraphics[width=6in]{images/chapter3/parallel.png}
+            \caption{Parallel Computing Diagram}
+            \label{parallelJava}
+        \end{figure}
 
-            \begin{figure}[!ht]
-                \includegraphics[width=6in]{images/chapter3/parallel.png}
-                \caption{Parallel Computing Diagram}
-                \label{parallelJava}
-            \end{figure}
+        To begin with, a processor manager is implemented for managing threads efficiently.
+        To ensure that the processor manager will be created at once,
+        the processor manager is designed with singleton pattern and static block.
+        Thread pool and queues are fundamental operators in the processor manager.
+        As can be seen in figure \ref{parallelJava}, frames in Mat format will be assigned as a task and queued in TaskQueue.
+        Then, tasks will be mapped with thread orderly by the thread pool.
+        A working thread will process the given task.
+        After a thread finished the given task,
+        the thread will write a log regarding social distancing detection, and notify the processor manager.
+        Then, a task will be recyled to free up memory.
+        When the processor manager receive a notification from workers,
+        a processed frame will be retrieved and ordered in the priority queue.
+        After the process manager retrieved all processed frames,
+        the process manager will notify the main activity.
+        All of these processes are run in the background to avoid a frozen application.
 
-        \subsection{Multitheading with C++}
+        - multithreading in C++
+        - Concept is the same as Java
+            - expect Java use threadpool, while C++ use OpenCV
+        - OpenCV use Threading Building Blocks (TBB)
+        - TBB is Intel's parallelism framework
 
 \begin{lstlisting}
     virtual void operator()(const cv::Range& range) const{
@@ -182,4 +191,20 @@
     }
 \end{lstlisting}
 
-        - How to show processed frame from live stream?
+    \section{Frame Rendering}
+        - to display video smoothly, technique is needed.
+
+        - there is maximum FPS thredshold
+        - if processed frame is not exceed maximum FPS thredshold
+            - send to processor manager
+                - after process manager will add processed frame in priority queue
+        - else do not process the frame
+
+        - avtivity will check priority queue
+            - if queue is not empty
+                - use frame in the queue
+            - else
+                - read lastest log
+                - draw detected regtangle over the incoming frame
+
+        - display frame

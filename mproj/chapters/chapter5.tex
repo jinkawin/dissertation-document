@@ -7,34 +7,18 @@
     The results of this implementation show that combination of MobileNet SSD model,
     manually built OpenCV with NEON, and using 8 threads gave the highest performance.
     The computation time of a pre-recorded single frame took 93 miliseconds or 10.752 frames per second,
-    and this application can display 25 frames of video in 1 second on a live camera.
+    and this application can display 25 frames of video in 1 second on a live camera
+    with the help of rendering technique.
     The accuracy of YOLO model was higher than MobileNet SSD model,
     but computational time and memory usage of YOLO model was worse than MobileNet SSD.
     The YOLO model computation time of 31 frames by using 8 threads was 99.441 seconds,
     while MobileNet SSD model took 5.064 seconds.
     In addition, if NEON is implemented MobileNet SSD mobile is able to process 31 frames in 2.890 seconds.
 
-    % What I didn't achieved
-        - using Multithreading and NEON without rendering technique, detection achieve 10 FPS
-            - which is not close to frame rate of camera
-        - 30 frames -> should process (maximum) 40 miliseconds per frame
-        - most of computation time is forward propagation
-        - caused by:
-            1. Multithrading didn't achieve theory/ideal speed-up, which could be caused by
-                1.1. threads are interrupted because limited resources
-                    - there are 8 threads. if we used all 8 threads, there is no spare worker for other works
-                        to handle Android's events
-                1.2 forward propagation time is doubled when number of threads is increase.
-            2.
-
-            Dnn.forward use Multithreading, plus I did Multithreading
-            - then, number of threads is greater than number of core.
-            - threads are inturrupted and cause context switching overhead
-
     \section{Limitation}
         There are limitations in this project which affect the application's performance.
         Firstly, there is limitation in resource, for example, YOLO model was comsuming memory immensely.
-        Garbage collector will collect unused objects and free up memory when there is out of memeory,
+        Garbage collector will collect unused objects and free up memory when there is out of memory,
         and running threads are interrupted.
         This affects application's performance.
 
