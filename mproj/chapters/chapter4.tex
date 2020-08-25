@@ -257,11 +257,13 @@
             which is faster than OpenCV without NEON 76.85 percent.
             In addition, multithreading can process 31 frames of video up to 2.890 seconds,
             which is faster than OpenCV without NEON 72.79 percent and OpenCV official build 42.93 percent.
-            For this performance, video can be processed 10 frames per second.
+            For this performance, video can be processed 10.75 frames per second.
+            In addition, according to rendering technique in chapter \ref{implement},
+            a real-time video from the camera can display up to 25 frames per second.
 
     % Analyse
-    However, these results were not achieve theorical,
-    and this application did not achieve processing 30 FPS even if
+    Thus far, these results were not achieve theorical,
+    and this application did not achieve processing and displaying 30 FPS even if
     multithreading and NEON are implemented.
     This underachieved performance could be caused by mulithreading itself.
     A forward propagation time, which took most of the computation time, is doubled when number of threads is increased.

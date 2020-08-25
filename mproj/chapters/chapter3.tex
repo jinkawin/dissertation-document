@@ -160,7 +160,7 @@
             \label{parallelJava}
         \end{figure}
 
-        To begin with, a processor manager is implemented for managing threads efficiently.
+        To begin with, multithreading in Java, a processor manager is implemented for managing threads efficiently.
         To ensure that the processor manager will be created at once,
         the processor manager is designed with singleton pattern and static block.
         Thread pool and queues are fundamental operators in the processor manager.
@@ -176,11 +176,18 @@
         the process manager will notify the main activity.
         All of these processes are run in the background to avoid a frozen application.
 
-        - multithreading in C++
-        - Concept is the same as Java
-            - expect Java use threadpool, while C++ use OpenCV
-        - OpenCV use Threading Building Blocks (TBB)
-        - TBB is Intel's parallelism framework
+        On the other hand, multithreading in C++ is slightly diffent.
+        The main concept of multithreading is the same as Java except thread management.
+        Thread pool is implemented in Java to manage and handle threads,
+        while parallelism framework in OpenCV is used in C++.
+        This framework is compiled with Threading Building Blocks (TBB), which is developed by Intel.
+
+        \begin{figure}[!ht]
+            \centering
+            \includegraphics[width=5in]{images/chapter3/cpp-parallel.png}
+            \caption{Multithreading in C++}
+            \label{parallelCpp}
+        \end{figure}
 
 \begin{lstlisting}
     virtual void operator()(const cv::Range& range) const{
@@ -191,20 +198,26 @@
     }
 \end{lstlisting}
 
+        To reduce the processing time,
+        the threads will process the frame which has the same index as itself,
+        and index will be incrase by the number of total available cores.
+        For example, as can be seen from the figure \ref{parallelCpp},
+        the first thread will process the first frame and the fifth frame.
+        Theoretically, if the frame rate of video is 30 FPS and there are 4 threads,
+        the first thread will have 100 miliseconds to finish processing the first frame before moving to the fifth frame.
+
     \section{Frame Rendering}
-        - to display video smoothly, technique is needed.
+        The maximum processing frame rate of this application is 10 FPS, which will be discuss in chapter \ref{testing}
+        At this frame rate, video cannot be displayed smoothly in live camera;
+        thus, there is an algorithm that helps video can be displayed in higher frame rate.
 
-        - there is maximum FPS thredshold
-        - if processed frame is not exceed maximum FPS thredshold
-            - send to processor manager
-                - after process manager will add processed frame in priority queue
-        - else do not process the frame
-
-        - avtivity will check priority queue
-            - if queue is not empty
-                - use frame in the queue
-            - else
-                - read lastest log
-                - draw detected regtangle over the incoming frame
-
-        - display frame
+        First of all, when a frame is streamed from the camera,
+        frame will be considered to be processed or not be processed.
+        Processing will be determinded from the capability of the device.
+        In other words, maximum processing frame rate will be used as threadshold.
+        If a number of processed frames in 1 second exceeds threadshold,
+        frame will not be sent to processor manager.
+        After that, the main activity will check a processed frame in priority queue from processer manager.
+        If there is a processed frame in priority queue, the processed frame will be displayed to the screen.
+        Otherwise, the main activity will read the last log of the processed frame, and retrieve all detection regtangles.
+        Then, the main activity will draw those regtangle on the incoming frame and display it on the screen.
