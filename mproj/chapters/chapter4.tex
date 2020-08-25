@@ -21,6 +21,8 @@
         Therer are 3 section of discussion. The first section will show the result of processing single frame.
         The second section will compare the performance amoung number of threads.
         The last section will discuss the result of NEON instruction and improvement.
+        To evaluate the performance of the application, computation time and frame rate are used as a measurement.
+        Frame rate is a number of frames that application can process in 1 second.
 
         \subsection{Single Frame Comparison}
             In this section, the performance of 2 detection models will be compare, regardless of other tools and techniques.
@@ -260,6 +262,21 @@
 
     % Summary
     - Summarise the result of performance
+        - I/O in thread
+            - If there is I/O operation in thread or loop, it will cost a lot of overhead
+        - Out of memory
+            - If let each thread hold the large variable, it will cost memory overhead.
+            - We have to free the variables after used. Otherwise, the x+1 th thread will allocate another xx MB.
+        - Young generation
+            - If there are lot of variables that are initialled in loop, there will be a lot young generation in the heap. So, when the number of young generations is reaching the threshold, GC will correct the young generation (freeing garbage in young generation heap) which affect the performance.
+        - GC
+            - Caused by Native [https://developer.android.com/studio/profile/memory-profiler]
+            - Bin is GC
+            - 8 GB (available only 3.8 GB)
+        - CPU hits 100% when performing tasks
+
+        - multithreading is not effective in a long-running task.
+            - threads are inturrupted.
 
     \section{Usability Testing}
         Moving on now to consider the usability of this application.
