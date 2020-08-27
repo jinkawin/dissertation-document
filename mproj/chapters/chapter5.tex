@@ -16,25 +16,27 @@
     In addition, if NEON is implemented MobileNet SSD mobile is able to process 31 frames in 2.890 seconds.
 
     \section{Limitation}
-        There are limitations in this project which affect the application's performance.
-        Firstly, there is limitation in resource, for example, YOLO model was comsuming memory immensely.
-        Garbage collector will collect unused objects and free up memory when there is out of memory,
-        and running threads are interrupted.
-        This affects application's performance.
-
-        Secondly, according to Oracle's document \cite{ORACLE-THREAD-POOL}, there is resouces consumtion bounding
-
-        Finally, the main computation part cannot be proccessed by using GPU.
-        OpenCV does not support Samsung Galaxy S10+'s GPU, which is ARM Mali.
+        Limitations of this application have been found during development.
+        The first limitation is the resolution of the video.
+        Regarding performance, this application have to process video in low resolution,
+        which is 540x480 pixels.
+        Processing high resolution video needs more computing power and resources to process in real-time,
+        which is limited in mobile phone.
+        Secondly, there is tread-off between computation time and accuracy.
+        YOLO model is able to detect human more efficiently than MobileNet SSD.
+        However, YOLO model has more computation time and resource comsumtion.
+        Finally, the main computation part cannot be proccessed by using GPU
+        because OpenCV does not support Samsung Galaxy S10+'s GPU
+        The GPU of Samsung Galaxy S10+ is ARM Mali.
         Currently, OpenCV support 3 GPUs: Intel, Nvidia, and AMD.
 
     \section{Future Work}
-        performance can be improved by:
-            1. Using GPU
-                - have to move to other libs, such as TensorFlow
-                - Multithreading with OpenCL
-                - Android's Neural Networks API
-
-                -> then, accuracy and FPS is improved
-                -> support higher resolution of video
+        These findings show that the performance cannot be enhanced futher by using CPU with OpenCV library.
+        Increasing accuracy and performance, computing power is needed more.
+        Using GPU to computing forward propagation may sinificantly reduce the processing time.
+        Regaring GPU supporting issue, library must be changed from OpenCV to others that support
+        GPU implementation, such as, TensorFlow.
+        In addition, OpenCL can be used with TensorFlow to do parallisation.
+        These can be implemented in Native code to maximise the performance,
+        and may achieve higher accuracy, FPS, and resolution.
 
