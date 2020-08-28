@@ -1,13 +1,13 @@
 \chapter{Background}\label{background}
 
-    This chapter aim to explain technologies, tools, and specification of a device that are used in this project.
+    This chapter aims to explain technologies, tools, and specification of a device that is used in this project.
     Then, this chapter gives an analysis of related applications.
 
     \section{Threading in Android}
-        Threads in Android development are categorised into 2 main categories: a main thread and a worker thread.
+        Threads in Android development are categorised into two main categories: the main thread and a worker thread.
         A main thread or UI thread is a thread that dispatch events of user interface widgets.
-        The events is dispatched regarding to Android's activity lifecycle,
-        and all events are managed by only 1 thread.
+        The events are dispatched regarding Android's activity lifecycle,
+        and all events are managed by only one thread.
         In other words, threads will not be spawned for handling a single event or component.
         Thus, if there is a long-running task, which is run by UI thread, events cannot be delivered.
         In addition, an application will show "Application not Responding"
@@ -20,7 +20,7 @@
             \label{thread-overview}
         \end{figure}
 
-        To avoid freezing application, a working thread is separated from the UI thread,
+        A working thread is separated from the UI thread to avoid freezing application,
             and it is called worker thread or background thread.
             This thread is able to process a long-running task in the background without interrupting the UI thread.
         In addition, the priority of the thread can be set from -20 to 19--- -20
@@ -29,11 +29,11 @@
             and the default value of foreground threads is -2.
 
         UI thread and background thread are running on different threads;
-        thus, handler is needed when there is communication between these threads.
+        thus, Handler is needed when there is communication between these threads.
         For example, as shown in figure \ref{thread-overview},
-        processes are divided into 2 parts: foreground and background.
-        Tasks are created by a manager which is running on the UI thread.
-        Then, Runnable, a component that is able to be run by background threads, will read tasked.
+        processes are divided into two parts: foreground and background.
+        Tasks are created by a manager who is running on the UI thread.
+        Then, Runnable, a component that can be run by background threads, will read tasked.
         After that, Runnable will be executed by background threads.
         Finally, Runnable will notify the manager through Handler.
 
@@ -50,12 +50,12 @@
             c = \frac{a_{1}+b_{1}}{2}
         \end{equation*}
 
-        However, three-dimensional space are captured into two-dimensional image,
+        However, three-dimensional space are captured into a two-dimensional image,
         so depth and perspective are concerned as can be seen in figure \ref{distanceCalculation}.
-        Thus, a couple variables are added into the formula.
+        Thus, a couple of variables are added into the formula.
         The first variable is $D$, which is the diagonal of the image.
         The second variable is $c$, which is a calibration.
-        These 2 variables will determine the depth of people in the image.
+        These two variables will determine the depth of people in the image.
 
         \begin{figure}[h!]
             \centering
@@ -75,8 +75,8 @@
             \label{determiningConcept}
         \end{figure}
 
-        For example, according to the figure \ref{twoDistances},
-        if distance is calculated without calibration, distance between 2 couples will be the same.
+        For example, according to figure \ref{twoDistances},
+        if the distance is calculated without calibration, the distance between 2 couples will be the same.
         Naturally, the distance between Human1 and Human2 must be further than the distance between Human3 and Human4.
 
     \section{Specification}
@@ -105,21 +105,21 @@
         \subsection{Object Detector}
             Object Detector is an Android application, which is able to detect objects through a camera.
             This application is implemented by deep learning library from TensorFlow with
-            MobileNet model. There are 2 modes in this application,
+            MobileNet model. There are two modes in this application,
             which are detection mode and classification mode.
-            The processing time of each frame is 250 to 300 miliseconds.
+            The processing time of each frame is 250 to 300 milliseconds.
 
         \subsection{TensorFlow Object Detection}
             TensorFlow Object Detection is an object detection application,
-            which is run on Android operating system.
-            TensorFlow's library is used in this application along with MobileNet model.
-            This application is able to detect object in real-time from the camera.
+            which is run on the Android operating system.
+            TensorFlow's library is used in this application, along with the MobileNet model.
+            This application is able to detect objects in real-time from the camera.
 
 
         \subsection{Computer Vision Detection}
-            Computer Vision Detection application operates on Android operating system.
-            This application is able to process real-time video from live camera,
+            Computer Vision Detection application operates on the Android operating system.
+            This application is able to process real-time video from a live camera,
             and OpenCV is used as a library.
             There are 12 options of algorithms, such as colour detector, canny detector, motion detector, and shape detector.
-            In addition, this application is able detect human faces and smiling faces.
+            Besides, this application is able to detect human faces and smiling faces.
             This application is able to process around 13 frames per second.

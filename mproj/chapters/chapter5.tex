@@ -1,16 +1,16 @@
 \chapter{Conclusion}\label{conclusion}
 
-    This project was undertaken to build a social distancing detection application on Android operating system,
+    This project was undertaken to build a social distancing detection application on the Android operating system,
     and maximising detection performance by using various technologies and techniques.
 
     % What I have achieved
-    The results of this implementation show that combination of MobileNet SSD model,
+    The results of this implementation show that the combination of MobileNet SSD model,
     manually built OpenCV with NEON, and using 8 threads gave the highest performance.
-    The computation time of a pre-recorded single frame took 93 miliseconds or 10.752 frames per second,
+    The computation time of a pre-recorded single frame took 93 milliseconds or 10.752 frames per second,
     and this application can display 25 frames of video in 1 second on a live camera
     with the help of rendering technique.
-    The accuracy of YOLO model was higher than MobileNet SSD model,
-    but computational time and memory usage of YOLO model was worse than MobileNet SSD.
+    The accuracy of YOLO model was higher than MobileNet SSD model.
+    However, computational time and memory usage of YOLO model was worse than MobileNet SSD.
     The YOLO model computation time of 31 frames by using 8 threads was 99.441 seconds,
     while MobileNet SSD model took 5.064 seconds.
     In addition, if NEON is implemented MobileNet SSD mobile is able to process 31 frames in 2.890 seconds.
@@ -18,25 +18,25 @@
     \section{Limitation}
         Limitations of this application have been found during development.
         The first limitation is the resolution of the video.
-        Regarding performance, this application have to process video in low resolution,
+        Regarding performance, this application has to process video in low resolution,
         which is 540x480 pixels.
-        Processing high resolution video needs more computing power and resources to process in real-time,
+        Processing high-resolution video needs more computing power and resources to process in real-time,
         which is limited in mobile phone.
         Secondly, there is tread-off between computation time and accuracy.
         YOLO model is able to detect human more efficiently than MobileNet SSD.
-        However, YOLO model has more computation time and resource comsumtion.
-        Finally, the main computation part cannot be proccessed by using GPU
+        However, YOLO model has more computation time and resource consumption.
+        Finally, the main computation part cannot be processed by using GPU
         because OpenCV does not support Samsung Galaxy S10+'s GPU
         The GPU of Samsung Galaxy S10+ is ARM Mali.
         Currently, OpenCV support 3 GPUs: Intel, Nvidia, and AMD.
 
     \section{Future Work}
-        These findings show that the performance cannot be enhanced futher by using CPU with OpenCV library.
+        These findings show that the performance cannot be enhanced further by using CPU with OpenCV library.
         Increasing accuracy and performance, computing power is needed more.
-        Using GPU to computing forward propagation may sinificantly reduce the processing time.
-        Regaring GPU supporting issue, library must be changed from OpenCV to others that support
-        GPU implementation, such as, TensorFlow.
-        In addition, OpenCL can be used with TensorFlow to do parallisation.
-        These can be implemented in Native code to maximise the performance,
+        Using GPU to forward computing propagation may significantly reduce the processing time.
+        Regarding GPU supporting an issue, the library must be changed from OpenCV to others that support
+        GPU implementation, such as TensorFlow.
+        In addition, OpenCL can be used with TensorFlow to do parallelisation.
+        These can be implemented in Native code to maximise the performance
         and may achieve higher accuracy, FPS, and resolution.
 
