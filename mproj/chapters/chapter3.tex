@@ -1,7 +1,8 @@
 \chapter{Design and Implementation}\label{implement}
 
-    In this chapter, the implementation details will be explained in many aspects, including Java Native Interface,
-    human detection and distance calculation.
+    This chapter shows the overview of application design and the application.
+    MoSCoW statement will describe the functional requirement and the implementation details will be explained in many aspects,
+    including Native library, social distancing detection process, parallelisation and processed video rendering.
 
     \section{MoSCoW Statement}
 
@@ -34,15 +35,16 @@
             \end{itemize}
 
     \section{Interface Design}
-        - open an app, you will face the main menu \ref{appendix-b:mainMenu}.
-        - there are three buttons in the main menu: browsing video, browsing picture and opening a camera.
-        - When a video or image button is clicked, the user will be navigated to file picker \ref{appendix-b:filePicker}
-        - When a file is chosen, the file will be processed in the background, and the status bar will be updated regarding the progress \ref{appendix-b:statusBar}.
-        - When processing is done, video or image will be shown \ref{appendix-b:result}
-        - red is social distancing  violation, green is OK.
-        - Or user can use camera for real-time detection
-        - user will be navigated to camera activity \ref{appendix-b:camera}
-        - application will process and show in real-time
+        This application consists of three main processing functions: using video, using a picture and live from a camera.
+        When a user opens the application, the user will navigate to the main menu, which can be seen in figure \ref{appendix-b:mainMenu}.
+        The user will be able to choose the processing function by clicking buttons.
+        As can be seen in figure \ref{appendix-b:filePicker}, video and picture button will navigate the user to the device's directory for choosing a file.
+        The file will be processed in the background when a file is chosen, and the status bar will be updated regarding the progress.
+        When processing is done, as it shows in figure \ref{appendix-b:process}, video or image will be shown at the top of the application
+        The detected human will be drawn a red rectangle if the detected human is breaching social distancing detection,
+        while The detected human will be drawn a red rectangle if the detected human is retaining social distancing.
+        In addition, the user is able to use the camera to determine social distancing in the real-time.
+        The user will be navigated to the camera activity when user click "camera" button in the application as can be seen in figure \ref{appendix-b:camera}.
 
     \section{Preparation}
         This application is implemented on the Android Operating System,
@@ -219,8 +221,7 @@
     \section{Frame Rendering}
         The maximum processing frame rate of this application is 10 FPS, which will be discussed in chapter \ref{testing}
         At this frame rate, video cannot be displayed smoothly in live camera;
-        thus, there is an algorithm that helps video can be displayed in a higher frame rate.
-
+        thus, there are steps that helps video can be displayed in a higher frame rate.
         First of all, when a frame is streamed from the camera,
         the frame will be considered to be processed or not be processed.
         Processing will be determined from the capability of the device.

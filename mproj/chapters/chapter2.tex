@@ -1,7 +1,7 @@
 \chapter{Background}\label{background}
 
-    This chapter aims to explain technologies, tools, and specification of a device that is used in this project.
-    Then, this chapter gives an analysis of related applications.
+    This chapter aims to introduce background knowledge that relates to this project.
+    Then, this chapter gives examples of related applications.
 
     \section{Threading in Android}
         Threads in Android development are categorised into two main categories: the main thread and a worker thread.
@@ -9,9 +9,10 @@
         The events are dispatched regarding Android's activity lifecycle,
         and all events are managed by only one thread.
         In other words, threads will not be spawned for handling a single event or component.
-        Thus, if there is a long-running task, which is run by UI thread, events cannot be delivered.
-        In addition, an application will show "Application not Responding"
-        when UI thread is blocked more than 5 seconds \cite{ANDROID-01}.
+        Thus, if there is a long-running task, which is run by UI thread, events cannot be delivered
+        because long-running task block UI thread.
+        If UI thread is blocked more than 5 seconds,
+        an application will show "Application not Responding"  \cite{ANDROID-01}.
 
         \begin{figure}[!ht]
             \centering
@@ -23,8 +24,7 @@
         A working thread is separated from the UI thread to avoid freezing application,
             and it is called worker thread or background thread.
             This thread is able to process a long-running task in the background without interrupting the UI thread.
-        In addition, the priority of the thread can be set from -20 to 19--- -20
-            is the highest priority, and 19 is the lowest priority.
+        In addition, the priority of the thread can be set from -20 to 19---the lowest priority is 19 and the highest priority is -20.
             The default value of background threads priority is 10,
             and the default value of foreground threads is -2.
 
@@ -32,7 +32,7 @@
         thus, Handler is needed when there is communication between these threads.
         For example, as shown in figure \ref{thread-overview},
         processes are divided into two parts: foreground and background.
-        Tasks are created by a manager who is running on the UI thread.
+        Tasks are created by a manager which is running on the UI thread.
         Then, Runnable, a component that can be run by background threads, will read tasked.
         After that, Runnable will be executed by background threads.
         Finally, Runnable will notify the manager through Handler.
