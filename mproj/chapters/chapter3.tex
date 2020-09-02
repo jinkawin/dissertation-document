@@ -58,7 +58,7 @@
         Implementation is divided into 3 layers.
             The first layer is a Java layer, which mainly interacts with a user,
             checks permissions, handles activity lifecycle, communicates with Java Native Interface (JNI), and loads native libraries.
-                Native libraries are compiled and built into shared libraries by a Native Development Kit (NDK).
+                Native libraries are compiled and built into shared libraries by a Native Development Kit (NDK) \cite{NDK-COOKBOOK}.
             The second layer is JNI, which is written in C or C++.
                 The task of the JNI layer is an intermediate connection between the Java layer and a C++ layer.
             The last layer is the C++ layer, which alternatively performs calculation tasks,
@@ -113,7 +113,7 @@
         The given video will be extracted into an array of images.
         Then, images will be converted into Bitmap and Mat format with RGBA colour model respectively.
         After that, the colour will be converted, which depends on the detection model.
-        As mentioned in section 4.1, there are two detection models are used for detecting humans in the given picture and video: YOLO model and MobileNet SSD model.
+        As mentioned in section 4.1, there are two detection models are used for detecting humans in the given picture and video: YOLO model and MobileNet SSD model \cite{tensorflow2015-whitepaper}, \cite{YOLO-v3}.
         Colour will be converted to RGB if the detection model is YOLO,
         while MobileNet SSD requires BGR colour model.
 
@@ -191,7 +191,7 @@
         On the other hand, multithreading in C++ is slightly different.
         The central concept of multithreading is the same as Java, except thread management.
         Thread pool is implemented in Java to manage and handle threads,
-        while parallelism framework in OpenCV is used in C++.
+        while parallelism framework in OpenCV is used in C++ \cite{opencv_library}.
         This framework is compiled with Threading Building Blocks (TBB), which is developed by Intel.
 
         \begin{figure}[!ht]

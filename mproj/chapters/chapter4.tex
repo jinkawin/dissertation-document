@@ -46,7 +46,7 @@
             \end{table}
 
             As can be seen from table \ref{performance:picture}, the processing time of YOLO model significantly increases when the size of the picture is greater.
-            In contrast, MobileNet SSD is able to process the given picture faster than YOLO model.
+            In contrast, MobileNet SSD is able to process the given picture faster than YOLO model \cite{tensorflow2015-whitepaper}, \cite{YOLO-v3}.
             The processing time of MobileNet SSD slightly increases when the size of the picture is increased.
 
         \subsection{Multithreading}
@@ -199,7 +199,7 @@
                 which causes total process time increase.
                 Due to the thread management system in C++ is different when compared to Java.
                 In C++, the thread is managed by OpenCV's parallelism framework, while
-                the thread pool is used in Java which is recommended by Android's document \cite{ANDROID-01}.
+                the thread pool is used in Java which is recommended by Android's document \cite{ANDROID-01}, \cite{opencv_library}.
             The second issue is the total process time.
                 Although writing in C++ is able to achieve theoretical speed-up,
                 the overall performance is slightly better when compared to Java.
@@ -207,7 +207,7 @@
         \subsection{NEON Instruction}
             OpenCV library provides a shared library, which is officially built by OpenCV.
             However, the library is built to support all CPU chipsets, and many features and conditions were flagged during building.
-            The library is needed to be manually built from scratch to evaluate the performance of NEON.
+            The library is needed to be manually built from scratch to evaluate the performance of NEON \cite{NEON-ARM}.
             OpenCV shared library was manually built into two versions: version with NEON and version without NEON.
             To maximise the performance of the NEON version, OpenCV is forced to be built with NEON instruction regardless of any condition,
             and it will support only ARMv8-A 64-bit architecture.
