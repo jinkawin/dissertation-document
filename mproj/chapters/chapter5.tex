@@ -31,12 +31,18 @@
         Currently, OpenCV support 3 GPUs: Intel, Nvidia, and AMD.
 
     \section{Future Work}
-        These findings show that the performance cannot be enhanced further by using CPU with OpenCV library.
-        Increasing accuracy and performance, computing power is needed more.
-        Using GPU to forward computing propagation may significantly reduce the processing time.
+    There are two aspects that can be done for further development.
+    The first aspect that may improve the performance is using GPU.
+        According to findings, these show that the performance cannot be enhanced further by using CPU with OpenCV library.
+        The more accuracy and performance, the more computing power is needed.
+        Using GPU to compute forward propagation may significantly reduce the processing time.
         Regarding GPU supporting an issue, the library must be changed from OpenCV to others that support
-        GPU implementation, such as TensorFlow.
-        In addition, OpenCL can be used with TensorFlow to do parallelisation.
+        GPU implementation, such as TensorFlow \cite{tensorflow2015-whitepaper}.
+        Also, OpenCL can be used with TensorFlow to do parallelisation.
         These can be implemented in Native code to maximise the performance
         and may achieve higher accuracy, FPS, and resolution.
 
+    The second aspect is implementing single instruction, multiple data (SIMD) in other environments.
+        For example, Streaming SIMD Extensions (SSE) can be implemented on Intel's processor and AMD's processor to improve the performance \cite{intel-sse}.
+        Besides, processing on Intel's processor can be optimised by using the Math Kernel Library (MKL) \cite{intel-alt}.
+       Implementing SIMD and evaluating other environments may gain an understanding of limitation and overhead of computation by using CPU.

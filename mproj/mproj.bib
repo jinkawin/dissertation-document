@@ -131,16 +131,16 @@
     note            = {Available from: \url{https://towardsdatascience.com/covid-19-ai-enabled-social-distancing-detector-using-opencv-ea2abd827d34}},
 }
 
-@misc{ORACLE-THREAD-POOL,
-	title          = {Technologies Arm Neon [Online]},
-    note            = {Available from: \url{https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor.html}},
+@misc{NEON-ARM,
+	title           = {Technologies Arm Neon [Online]},
+    note            = {Available from: \url{https://www.arm.com/why-arm/technologies/neon}},
 	year            = {2020 [Accessed 2020-08-18]},
 }
 
-@misc{NEON-ARM,
+@misc{ORACLE-THREAD-POOL,
 	author          = {Java™ Platform},
 	booktitle       = {Standard Edition 7 API Specification},
-    note            = {Available from: \url{https://www.arm.com/why-arm/technologies/neon}},
+    note            = {Available from: \url{https://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ThreadPoolExecutor.html}},
 	title           = {ThreadPoolExecutor [Online]},
 	year            = {2020 [Accessed 2020-08-18]},
 }
@@ -165,10 +165,10 @@
 }
 
 @article{YOLO-v3,
-  title             = {Yolov3: An incremental improvement},
-  author            = {Redmon, Joseph and Farhadi, Ali},
-  journal           = {arXiv preprint arXiv:1804.02767},
-  year              = {2018}
+    title            = {Yolov3: An incremental improvement},
+    author           = {Redmon, Joseph and Farhadi, Ali},
+    journal          = {arXiv preprint arXiv:1804.02767},
+    year             = {2018}
 }
 
 @article{opencv_library,
@@ -179,4 +179,31 @@
     priority        = {4},
     title           = {{The OpenCV Library}},
     year            = {2020}
+}
+
+@book{intel-alt,
+    title           = {Intel Math Kernel Library. Reference Manual},
+    publisher       = {Intel Corporation},
+    note            = {Santa Clara, USA. ISBN 630813-054US},
+    author          = {Jeanette S Feldhousen},
+    year            = {2015},
+}
+
+@article{intel-sse,
+    author          = {Thakkar, Shreekant (Ticky) and Huff, Tom},
+    title           = {Internet Streaming SIMD Extensions},
+    year            = {1999},
+    issue_date      = {December 1999},
+    publisher       = {IEEE Computer Society Press},
+    address         = {Washington, DC, USA},
+    volume          = {32},
+    number          = {12},
+    issn            = {0018-9162},
+    url             = {https://doi.org/10.1109/2.809248},
+    doi             = {10.1109/2.809248},
+    abstract        = {Because floating-point computation is the heart of 3D geometry, speeding up floating-point computation is vital to overall 3D performance. To produce a visually perceptible difference in graphics applications, Intel's 32-bit processors--based on the IA-32 architecture--required an increase of 1.5 to 2 times the native floating-point performance. One path to better performance involves studying how the system uses data. Today's 3D applications can execute a lot faster by differentiating between data used repeatedly and streaming data--data used only once and discarded. Pentium III's new floating- point extension lets programmers designate data as streaming and provides instructions that handle this data efficiently. The authors designed the Internet Streaming SIMD Extensions to enable a new level of visual computing on the volume PC platform. They discuss their results in terms of boosting the performance of 3D and video applications.},
+    journal         = {Computer},
+    month           = dec,
+    pages           = {26–34},
+    numpages        = {9}
 }
