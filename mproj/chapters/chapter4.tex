@@ -2,9 +2,9 @@
 
     This chapter presents an evaluation of the application, which is divided into three parts.
     The first part will show variables that must be controlled for the reliability and stability of the result.
-    The second part is going to evaluate the application's performance,
+    The second part evaluates the application's performance,
     which are comparisons among models, programming languages, and technologies.
-    The last section is going to show a usability testing of this application.
+    The last section shows a usability testing of this application.
 
     \section{Controlled Variables}
         To ensure the result of the performance will not be varied by other factors, some variables must be controlled as following:
@@ -12,23 +12,47 @@
             \item All testing cases will be run on Samsung Galaxy S10+.
             \item All running background applications will be closed, and memory will be freed before testing.
             \item To prevent CPU's speed is limited, a power management mode will be set to "Optimised".
-            \item Total number of frames in the testing video will be set to 31 frames.
-            \item A testing video resolution will be set to 540x480 pixels.
+            \item The total number of frames in the testing video will be set to 31.
+            \item The testing video resolution will be set to 540x480 pixels.
         \end{enumerate}
+
+    \section{Experimental setup}
+        The proposed application is developed and tested on using the device specification shown in Table \ref{specification}:
+
+        \begin{table}[!htp]\centering
+            \scriptsize
+            \begin{tabular}{lrll}\toprule
+                Device              &Device             &Samsung S10+ \\ \hline
+                Operating System    &Operating System   &Android 10 (Q) \\ \hline
+                Processor           &CPU                &Samsung Exynos 9820 \\
+                                    &Cores              &8 \\
+                                    &Architecture       &2x ARM Cortex-A75 2.73GHz \\
+                                    &                   &4x ARM Cortex-A55 1.95GHz \\
+                                    &                   &2x Samsung Exynos M4 1.95 GHz \\
+                                    &GPU                &Mali-G76 \\ \hline
+                Memory              &RAM                &8 GB \\
+                \bottomrule
+            \end{tabular}
+
+            \caption{Device specification}\label{specification}
+        \end{table}
+
+        However, the GPU is not used in this experiment due to the limitation of the OpenCV library.
+        In addition, 2 models are used in this experiment: You Only Look Once \cite{YOLO-v3} and MobileNet SSD \cite{mobilenet} \cite{ssd}.
+        The sample of pre-recorded video is obtained from Ben Benfold and Ian Reid \cite{benfold2009attention}.
 
     \section{Performace Evaluation}
         In this section, the performance of detection models will be compared, and the result will be discussed.
         There are three sections of discussion. The first section will show the result of processing a single frame.
         The second section will compare the performance among a number of threads.
         The last section will discuss the result of NEON instruction and improvement.
-        Computation time and frame rate are used as a measurement to o evaluate the performance of the application.
-        Frame rate is a number of frames that application can process in 1 second.
-        The sample of pre-recorded file is obtained from Ben Benfold and Ian Reid \cite{benfold2009attention}.
+        Computation time and frame rate are used as a metrics to o evaluate the performance of the application.
+        The Frame rate is the number of frames that application can process in 1 second.
 
         \subsection{Single Frame Comparison}
             In this section, the performance of 2 detection models will be compare, regardless of other tools and techniques.
             To evaluate the performance, each model will process on a single frame.
-            There are two different resolutions used as inputs for comparing the performance and understanding the variation of calculation time.
+            The resolutions with 960×540 and 540x480 are used as inputs for comparing the performance and understanding the variation of calculation time.
 
             % Picture Performance Table
             \begin{table}[!htp]\centering
@@ -45,7 +69,7 @@
                 \caption{Picture Processing Performace}\label{performance:picture}
             \end{table}
 
-            As can be seen from table \ref{performance:picture}, the processing time of YOLO model significantly increases when the size of the picture is greater.
+            As can be seen in Table \ref{performance:picture}, the processing time of the YOLO model significantly increases when the size of the picture is increased.
             In contrast, MobileNet SSD is able to process the given picture faster than YOLO model \cite{tensorflow2015-whitepaper}, \cite{YOLO-v3}.
             The processing time of MobileNet SSD slightly increases when the size of the picture is increased.
 
@@ -54,14 +78,15 @@
             % Introduction
             In this section, the performance of both models will be evaluated with multithreading technique,
             and the evaluation will be divided into three parts: sequential computing, YOLO with multithreading, and MobileNet SSD with multithreading.
-            As mentions previous section, in this evaluation, controlled variables are set.
-            The number of frames in the testing video will be set to 31 frames.
+            As mentions in the previous section, in this evaluation, controlled variables are set.
+            The number of frames in the testing video will be set to 31.
 
             % Sequential Programming
-            For the first part, an application will process the testing video sequentially and measure the performance.
+            For the first part, the application will process the testing video sequentially and measure the performance.
             This measurement will be compared to multithreading and evaluate the improvement of the performance.
-            As a result in table \ref{yolo:official-performace} and \ref{ssd:official-performace},
-            YOLO model took 102.972 seconds to processed 31 frames video, while MobileNet SSD model took 7.132 seconds.
+            As shown in Table \ref{yolo:official-performace} and \ref{ssd:official-performace},
+            the YOLO model took 102.972 seconds to process 31 frames of video, while MobileNet SSD model took 7.132 seconds.
+            In addition, cells in the table that have no data will be represented as dash.
 
             % YOLO Model Performace Table
             \begin{table}[!htp]\centering
@@ -88,7 +113,7 @@
 
             % Introduction to Multithreading
             Then, a multithreading technique is implemented to increase performance and achieve real-time processing.
-            To evaluate the improvement of multithreading, a number of processors will be doubled as follows: 1, 2, 4, and 8.
+            To evaluate the improvement of multithreading, number of cores will be doubled as follows: 1, 2, 4, and 8.
             In the testing device, there are 8 physical cores, so it can effectively process up to 8 threads.
 
             % SSD Model Performace Table
@@ -115,53 +140,53 @@
             \end{table}
 
             % YOLO with multithreading
-            As shown in table \ref{yolo:official-performace},
-                the performance of 2 threads is improved only 18.16 per cent,
-                and it reaches the best performance at 21.7 per cent by using 4 threads.
+            As shown in Table \ref{yolo:official-performace},
+                the performance of 2 threads is improved only by 18.16\%,
+                and it reaches the best performance at 21.7\% by using 4 threads.
             However, the performance of 8 threads is worse than 2 threads.
                 One of the factors is the Garbage Collection (GC).
                 The application was frozen while GC is collecting garbage.
             GC is not collecting only short-lived objects but long-lived objects as well,
-                and GC is more often collect garbage when the number of threads is increased.
+                and GC collects garbage more often when the number of threads is increased.
 
-            As shown in figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
+            As shown in Figure \ref{yolo:memoryUsage}, memory was allocated by double and array of double,
                 and GC was freeing these allocation 10 times within 5 seconds.
             Consequently, CPU usage is dropped when GC is working.
-                This problem can be seen in figure \ref{yolo:cpuUsage}.
+                This problem can be seen in Figure \ref{yolo:cpuUsage}.
                 The progress status will be green when a thread is working.
                 It will be yellow when a thread is interrupted by GC,
                 and it will be grey when a thread has no activity.
 
             % CPU Usage
             \begin{figure}[!ht]
-                \includegraphics[width=6in]{images/chapter5/YOLO/cpu-usage-8threads.png}
+                \includegraphics[width=6in]{images/chapter5/YOLO/cpu-8-thread-crop.png}
                 \caption{CPU Usage of YOLO Model with 8 threads}
                 \label{yolo:cpuUsage}
             \end{figure}
 
             % Memory Usgae
             \begin{figure}[!ht]
-                \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting.png}
+                \includegraphics[width=6in]{images/chapter5/gc-problem/gc-collecting-crop.png}
                 \caption{Memory Usage of YOLO Model with 8 threads}
                 \label{yolo:memoryUsage}
             \end{figure}
 
             % SSD with multithreading
             For the MobileNet SSD model,
-            the calculation time of 2 threads is improved only 16.56 per cent,
-            and 8 threads give the best performance with 38.53 per cent as can be seen in table \ref{ssd:official-performace}.
+            the calculation time of 2 threads is improved only 16.56\%,
+            and 8 threads give the best performance with 38.53\% as can be seen in Table \ref{ssd:official-performace}.
             Objects are not collected by GC in this model, but memory will be freed after processing is finished.
-            The improvement computation time of 8 threads by using MobileNet SSD model is better than YOLO model,
-            but the speed-up time of both models still lower than an ideal time.
+            The improvement of computation time of 8 threads by using MobileNet SSD model is better than YOLO model,
+            but the speedup of both models is still much lower than the ideal.
 
             % Conclusion and tasking about recompile model and NEON
-            In summary, the overall performance of YOLO model with multithreading is slightly improved,
+            In summary, the overall performance of the YOLO model with multithreading is slightly improved,
             and it becomes worse when using 8 threads.
-            Regarding this examination, one of the obvious factors of these problems is
+            One of the obvious factors of these problems is
             GC.
             In contrast, the speed-up scale of MobileNet SSD is better than YOLO model because there is no
             GC during processing.
-            YOLO model uses more memory than MobileNet SSD in term of variables in double type.
+            The YOLO model uses more memory than MobileNet SSD in terms of variables in double type.
 
         \subsection{Android Native Development Kit}
 
@@ -187,28 +212,29 @@
                 \caption{MobileNet SSD Model with OpenCV official build in C++}\label{ssd:official-performace-cpp}
             \end{table}
 
-            As mentioned in the chapter \ref{implement},
+            As mentioned in Chapter \ref{implement},
             detection process and distance measurement can be written in C++ to achieve higher performance.
-            As it can be seen in table \ref{ssd:official-performace-cpp},
-            the performance of using 2 threads is improved 44.79 per cent when compared to using 1 thread,
-            and the performance is fastened up to 58.54 per cent when using 8 threads.
-            However, there are 2 issues of this implementation.
+            As it can be seen in Table \ref{ssd:official-performace-cpp},
+            the performance of using 2 threads is improved 44.79\% when compared to using 1 thread,
+            and the performance is fastened up to 58.54\% when using 8 threads.
+            However, there are 2 issues in this implementation.
             The first issues is the forward propagation time.
                 Theoretically, the processing time of sequential computing and using a single thread should be the same.
                 In contrast, the forward propagation time of single thread was doubled,
-                which causes total process time increase.
-                Due to the thread management system in C++ is different when compared to Java.
+                which causes the total process time to increase.
+                this is due to the thread management system in C++ that is different when compared to Java.
                 In C++, the thread is managed by OpenCV's parallelism framework, while
                 the thread pool is used in Java which is recommended by Android's document \cite{ANDROID-01}, \cite{opencv_library}.
             The second issue is the total process time.
-                Although writing in C++ is able to achieve theoretical speed-up,
-                the overall performance is slightly better when compared to Java.
+                Although writing in C++ is able to achieve theoretical speedup,
+                the overall performance improves by 92 milliseconds when compared to Java.
 
-        \subsection{NEON Instruction}
-            OpenCV library provides a shared library, which is officially built by OpenCV.
+        \subsection{NEON Instructions}
+            The OpenCV library provides a shared library, which is called OpenCV4Android.
+            This library is officially built by OpenCV, and it is used.
             However, the library is built to support all CPU chipsets, and many features and conditions were flagged during building.
-            The library is needed to be manually built from scratch to evaluate the performance of NEON \cite{NEON-ARM}.
-            OpenCV shared library was manually built into two versions: version with NEON and version without NEON.
+            The library requires to be manually built from scratch to evaluate the performance of NEON \cite{NEON-ARM}.
+            The OpenCV shared library was manually built into two versions: version with NEON and version without NEON.
             To maximise the performance of the NEON version, OpenCV is forced to be built with NEON instruction regardless of any condition,
             and it will support only ARMv8-A 64-bit architecture.
 
@@ -256,19 +282,32 @@
                 \caption{Video Processing with MobileNet SSD Model ({\bf with} NEON)}\label{ssd:neon-performance}
             \end{table}
 
-            After OpenCV library is manually built and forced to be compiled with NEON instruction,
+            After The OpenCV library is manually built and forced to be compiled with NEON instruction,
             the performance of human detection is significantly improved.
-            As can be seen in table \ref{ssd:non-neon-performance} and \ref{ssd:neon-performance},
+            As can be seen in Table \ref{ssd:non-neon-performance} and \ref{ssd:neon-performance},
             the sequential computing took 4 second for processing human detection,
-            which is faster than OpenCV without NEON 76.85 percent.
+            which is 76.85\% faster than OpenCV without NEON.
             In addition, multithreading can process 31 frames of the video up to 2.890 seconds,
-            which is faster than OpenCV without NEON 72.79 per cent and OpenCV official build 42.93 per cent.
-            For this performance, video can be processed 10.75 frames per second.
-            In addition, according to rendering technique in chapter \ref{implement},
+            which is 72.79\% faster than OpenCV without NEON and 42.93\% faster than the OpenCV official build.
+            For this performance, video can be processed at 10.75 frames per second.
+            In addition, according to the rendering technique in Chapter \ref{implement},
             a real-time video from the camera can display up to 25 frames per second.
 
     % Analyse
-    Thus far, these results were not achieved theoretical,
+
+    % graph summary
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=5in]{images/chapter5/summary/SSD-summary.png}
+        \caption{Video Processing with OpenCV and MobileNet SSD Model}
+        \label{graphSummary}
+    \end{figure}
+
+    In summary, using the MobileNet SSD model with OpenCV has a better performance than YOLO model.
+    In addition, OpenCV can be enhanced by manually build.
+    According to Figure \ref{graphSummary}, the fastest processing time is manually built OpenCV with NEON,
+    which is 2.89 seconds to process 31 frames of video.
+    However, these results were not achieved the theoretical performance,
     and this application did not achieve processing and displaying 30 FPS even if
     multithreading and NEON are implemented.
     This underachieved performance could be caused by mulithreading itself.
@@ -276,6 +315,6 @@
         One of the issues that emerge from this finding is parallelisation in the OpenCV library.
         Some function underneath the forward propagation function is parallelised by using multithreading.
         Then, when a frame processing thread is created, a number of threads may exceed the number of physical cores.
-        Thus, threads are interrupted, and it caused a context switching overhead.
+        Thus, threads are interrupted, and it causes a context switching overhead.
     Besides, the calculation time of using a single thread is always greater than
-    the calculation time un sequential computing and it could be caused by this problem.
+    the calculation time of sequential computing and it could be caused by this problem.

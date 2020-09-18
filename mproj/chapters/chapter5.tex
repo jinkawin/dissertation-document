@@ -1,48 +1,66 @@
 \chapter{Conclusion}\label{conclusion}
 
     This project was undertaken to build a social distancing detection application on the Android operating system,
-    and maximising detection performance by using various technologies and techniques.
+    and to maximise detection performance by using various technologies and techniques.
 
     % What I have achieved
-    The results of this implementation show that the combination of MobileNet SSD model,
-    manually built OpenCV with NEON, and using 8 threads gave the highest performance \cite{tensorflow2015-whitepaper}, \cite{opencv_library}, \cite{NEON-ARM}.
+    The results of this implementation show that the combination of the MobileNet SSD model,
+    manually built OpenCV with NEON, and using 8 threads provides the best performance \cite{tensorflow2015-whitepaper}, \cite{opencv_library}, \cite{NEON-ARM}.
     The computation time of a pre-recorded single frame took 93 milliseconds or 10.752 frames per second,
     and this application can display 25 frames of video in 1 second on a live camera
     with the help of rendering technique.
-    The accuracy of YOLO model was higher than MobileNet SSD model.
-    However, computational time and memory usage of YOLO model was worse than MobileNet SSD.
+    The accuracy of the YOLO model was higher than MobileNet SSD model.
+    However, computational time and memory usage of the YOLO model was worse than MobileNet SSD.
     The YOLO model computation time of 31 frames by using 8 threads was 99.441 seconds,
-    while MobileNet SSD model took 5.064 seconds.
-    In addition, if NEON is implemented MobileNet SSD mobile is able to process 31 frames in 2.890 seconds.
+    while the MobileNet SSD model took 5.064 seconds.
+    In addition, if NEON is implemented the MobileNet SSD mobile is able to process 31 frames in 2.890 seconds.
 
     \section{Limitation}
         Limitations of this application have been found during development.
-        The first limitation is the resolution of the video.
-        Regarding performance, this application has to process video in low resolution,
-        which is 540x480 pixels.
-        Processing high-resolution video needs more computing power and resources to process in real-time,
-        which is limited in mobile phone.
-        Secondly, there is tread-off between computation time and accuracy.
-        YOLO model is able to detect human more efficiently than MobileNet SSD.
-        However, YOLO model has more computation time and resource consumption.
-        Finally, the main computation part cannot be processed by using GPU
-        because OpenCV does not support Samsung Galaxy S10+'s GPU
-        The GPU of Samsung Galaxy S10+ is ARM Mali.
-        Currently, OpenCV support 3 GPUs: Intel, Nvidia, and AMD.
+        There are 3 main limitations of this application.
+        The first limitation is processing with a graphics processing unit (GPU).
+            Due to OpenCV, currently, supports 3 GPUs which are Intel, Nvidia, and AMD.
+            However, the testing environment, Samsung Galaxy S10+, has an ARM Mali GPU.
+        Secondly, processing video in real-time with the YOLO model cannot be achieved.
+            YOLO model requires a great amount of resources including computing power and memory.
+            Because of limited memory and high demand of memory, garbage collector causes interruptions and frozes the application.
+            In addition, using only CPU cannot achieve an ideal processing time even though multithreading is applied.
+            However, the YOLO model is able to detect human more efficiently than the MobileNet SSD.
+            Thus, there is a tread-off between processing time and accuracy.
+            Finally, the resolution of the video is limited.
+            Regarding performance, the proposed application processes video in low resolution,
+            which is 540x480 pixels.
+            Processing high-resolution video needs more computing power and resources to process in real-time,
+            which are limited in mobile phones.
 
     \section{Future Work}
-    There are two aspects that can be done for further development.
-    The first aspect that may improve the performance is using GPU.
-        According to findings, these show that the performance cannot be enhanced further by using CPU with OpenCV library.
+    Considering the studies and limitation of this project,
+    there are many possible aspects that can be done for further development.
+
+    The first aspect that may improve the performance is using GPUs.
+        According to the findings, these show that the performance cannot be enhanced further by using CPU with OpenCV library.
         The more accuracy and performance, the more computing power is needed.
-        Using GPU to compute forward propagation may significantly reduce the processing time.
-        Regarding GPU supporting an issue, the library must be changed from OpenCV to others that support
+        Using GPUs to compute forward propagation may significantly reduce the processing time.
+        To support using GPUs, the library must be changed from OpenCV to others that support
         GPU implementation, such as TensorFlow \cite{tensorflow2015-whitepaper}.
         Also, OpenCL can be used with TensorFlow to do parallelisation.
         These can be implemented in Native code to maximise the performance
         and may achieve higher accuracy, FPS, and resolution.
 
-    The second aspect is implementing single instruction, multiple data (SIMD) in other environments.
+    The second aspect is implementing single instruction, multiple data (SIMD) in other modules,
+        which may gain processing performance.
+        There are parts of the implementation and function that are written in Java, and these do not support SIMD.
+        To maximise the performance, rewriting the programme in C or C++ with SIMD is needed.
+        For instance, calculating the distance between detected humans is written in Java,
+        so this function can be rewritten in C++ to support SIMD.
+        In addition, implementing SIMD can be done in other environments for comparing performance and gaining insight.
         For example, Streaming SIMD Extensions (SSE) can be implemented on Intel's processor and AMD's processor to improve the performance \cite{intel-sse}.
         Besides, processing on Intel's processor can be optimised by using the Math Kernel Library (MKL) \cite{intel-alt}.
-       Implementing SIMD and evaluating other environments may gain an understanding of limitation and overhead of computation by using CPU.
+        Implementing SIMD and evaluating other environments may gain an understanding of limitation and overhead of computation by using CPU.
+
+    Finally, another aspect is improving the usability of the application.
+        Features can be added to the application to improve practical usability.
+        For instance, face mask detection can be implemented into the application \cite{facemask-detection},
+        and the performance can be enhanced by using multithreading and SIMD.
+        In addition, this application can be integrated with other systems
+        for practical usage such as a security system.
